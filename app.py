@@ -16,7 +16,7 @@ def create_account():
     # Create a cursor object
     cursor = conn.cursor()
 
-    # Create a table
+    # Create  table
     cursor.execute('''CREATE TABLE IF NOT EXISTS users
                     (id INTEGER PRIMARY KEY, username TEXT, password TEXT)''')
 

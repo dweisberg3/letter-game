@@ -8,7 +8,7 @@ def home():
     return render_template('index.html')
 
 
-@app.rout('/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     username  = request.form.get('username')
     password  = request.form.get('password')
@@ -27,12 +27,12 @@ def create_account():
 
     # Create  table
     cursor.execute('''CREATE TABLE IF NOT EXISTS users
-                    (id INTEGER PRIMARY KEY, username TEXT, password TEXT, score NUMBER, last_login TEXT)''')
+                    (id INTEGER PRIMARY KEY, username TEXT, password TEXT, last_login TEXT)''')
 
     # Insert data into the table
-    cursor.execute("INSERT INTO users (username, password, score, last_login) VALUES (? , ?)", (username, password, 0, ""))
+    cursor.execute("INSERT INTO users (username, password, last_login) VALUES (? , ?)", (username, password, ""))
     conn.commit()
-    return render_template('welcome.html', username=username)
+    return "Account Created!" # render_template('welcome.html', username=username)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -34,7 +34,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS users
                 (id INTEGER PRIMARY KEY, username TEXT, password TEXT, score INTEGER, last_login TEXT)''')
 
 # Insert data into the table
-cursor.execute("INSERT INTO users (username, password, score, last_login) VALUES (? , ?, ?, ?)", (username, password, score, formatted_date))
+cursor.execute("INSERT INTO users (name, username, password, score, last_login) VALUES (? , ?, ?, ?)", (username, password, score, formatted_date))
 conn.commit()
 
 cursor.execute('SELECT * FROM users')

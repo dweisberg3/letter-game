@@ -35,7 +35,7 @@
 // export default App
 
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './LetterGame.css';
 import audioA from './aFile.wav'; // Add audio files for all letters
 import audioB from './bFile.wav';
 import audioC from './cFile.wav';

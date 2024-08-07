@@ -122,45 +122,65 @@
 // // export default Login;
 
 
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './Login';
-import LetterGame from './LetterGame';
-import Admin from './Admin';
+// import React, { useState } from 'react';
+// import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+// import Login from './Login';
+// import LetterGame from './LetterGame';
+// import Admin from './Admin';
+// import Board from './components/Board';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+// function App() {
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [isAdmin, setIsAdmin] = useState(false);
 
-  const handleLogin = (username:string, password:string) => {
-    if (username === 'admin' && password === 'admin') {
-      setIsAdmin(true);
-      setIsAuthenticated(true);
-    } else if (username !== '' && password !== '') {
-      setIsAdmin(false);
-      setIsAuthenticated(true);
-    }
-  };
+//   const handleLogin = (username:string, password:string) => {
+//     if (username === 'admin' && password === 'admin') {
+//       setIsAdmin(true);
+//       setIsAuthenticated(true);
+//     } else if (username !== '' && password !== '') {
+//       setIsAdmin(false);
+//       setIsAuthenticated(true);
+//     }
+//   };
+
+//   return (
+//     <Router>
+//       <Routes>
+//         <Route path="/login" element={<Login onLogin={handleLogin} />} />
+//         <Route
+//           path="/letter-game"
+//           element={isAuthenticated ? <Board /> : <Navigate to="/login" />}
+//         />
+//         <Route
+//           path="/admin"
+//           element={isAuthenticated && isAdmin ? <Admin /> : <Navigate to="/login" />}
+//         />
+//         <Route
+//           path="*"
+//           element={<Navigate to="/login" />}
+//         />
+//       </Routes>
+//     </Router>
+//   );
+// }
+
+// export default App;
+
+import React, { useContext } from 'react';
+import Board from './components/Board';
+import Game from './components/Game';
+import { NavigationContext } from './NavigationContext';
+import './App.css';
+
+const App: React.FC = () => {
+  const navigation = useContext(NavigationContext);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route
-          path="/letter-game"
-          element={isAuthenticated ? <LetterGame /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/admin"
-          element={isAuthenticated && isAdmin ? <Admin /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="*"
-          element={<Navigate to="/login" />}
-        />
-      </Routes>
-    </Router>
+    <div className="App">
+      {navigation?.sectionIndex === null ? <Board /> : <Game sectionIndex={navigation!.sectionIndex} />}
+    </div>
   );
 }
 
 export default App;
+

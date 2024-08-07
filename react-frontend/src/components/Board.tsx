@@ -1,57 +1,28 @@
-import { useState } from 'react'
-import LetterBox from './LetterBox';
+import React, { useContext } from 'react';
+import Section from './Section';
+import { NavigationContext } from '../NavigationContext';
+import { sections } from '../utils/Constants';
 
-function Board(){
 
-    const [state, setState] = useState(0);
+const Board: React.FC = () => {
+  const navigation = useContext(NavigationContext);
 
-    const handleClick = () => {
-      setState(state + 1); // Update the state to trigger a re-render
-    };
-    // const letters : string[] = ['a','b', 'c', 'd'];
-    const letters : string [] = [
-        "א", // Aleph
-        "ב", // Bet
-        "ג", // Gimel
-        "ד", // Dalet
-        "ה", // He
-        "ו", // Vav
-        "ז", // Zayin
-        "ח", // Chet
-        "ט", // Tet
-        "י", // Yod
-        "כ", // Kaf
-        "ך", // Final Kaf
-        "ל", // Lamed
-        "מ", // Mem
-        "ם", // Final Mem
-        "נ", // Nun
-        "ן", // Final Nun
-        "ס", // Samekh
-        "ע", // Ayin
-        "פ", // Pe
-        "ף", // Final Pe
-        "צ", // Tsadi
-        "ץ", // Final Tsadi
-        "ק", // Qof
-        "ר", // Resh
-        "ש", // Shin
-        "ת"  // Tav
-      ];
-    const shuffle = ([...arr]) => {
-      let m = arr.length;
-      while (m) {
-        const i = Math.floor(Math.random() * m--);
-        [arr[m], arr[i]] = [arr[i], arr[m]];
-      }
-      return arr;
-    };
+  const handleClick = (index: number) => {
+    navigation?.navigateToGame(index);
+  };
 
-    
-   
-      return <><button onClick={handleClick}>Clear Board</button>
-       {shuffle(letters).map((letter) =>  <LetterBox  letter= {letter}  ></LetterBox>)}
-      </>
+  return (
+    <div className="board">
+      {sections.map((section, index) => (
+        <Section 
+          key={index} 
+          letters={section.letters.map((el) => el['unicode'])} 
+          color={section.color} 
+          onClick={() => handleClick(index)} 
+        />
+      ))}
+    </div>
+  );
+};
 
-}
 export default Board;

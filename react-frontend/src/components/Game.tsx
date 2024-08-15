@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { NavigationContext } from '../NavigationContext';
 import { sections } from '../utils/Constants';
+import Timer from './Timer';
 
 interface GameProps {
   sectionIndex: number;
@@ -11,11 +12,14 @@ const Game: React.FC<GameProps> = ({ sectionIndex }) => {
   const [currentLetterIndex, setCurrentLetterIndex] = useState(Math.floor(Math.random() * section.letters.length));
   const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
   const navigation = useContext(NavigationContext);
+  const [attemptsRemaining, setAttemptsRemaining] = useState(10);
+  const [isActive, setIsActive] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(10); // 2 minutes
 
   const divStyles = {
     display: 'flex',
     justifyContent: 'center',
-    cursor: 'pointer',
+    cursor: correctAnswers.size < section.letters.length && isActive ? 'pointer' : 'default',
     alignItems: 'center',
     width: '50px',
     height: '50px',
@@ -27,6 +31,27 @@ const Game: React.FC<GameProps> = ({ sectionIndex }) => {
   }
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setIsActive(false);
+    }
+  }, [timeLeft]);
+
+  useEffect(() => {
     console.log(correctAnswers.size === section.letters.length)
     if (currentLetterIndex < section.letters.length) {
       const audio = new Audio(section.letters[currentLetterIndex]['audiofilePath']);
@@ -36,21 +61,23 @@ const Game: React.FC<GameProps> = ({ sectionIndex }) => {
 
     });
     }
-  }, [currentLetterIndex, section.letters]);
+  }, [attemptsRemaining, section.letters]);
 
   const handleLetterClick = (letter: string) => {
-    if(correctAnswers.size === section.letters.length){
-      return
+    if(attemptsRemaining===1){
+      setIsActive(false)
     }
     if (letter === section.letters[currentLetterIndex]['unicode']) {
      
       setCorrectAnswers((prevSet) => new Set(prevSet).add(letter))
       if(correctAnswers.size === section.letters.length){
-        return 
+        
       }
-    } else {
-      console.log("wrong!")
     }
+    else{
+      setIsActive(false)
+    } 
+    setAttemptsRemaining(attemptsRemaining-1)
     setCurrentLetterIndex(Math.floor(Math.random() * section.letters.length))
     console.log(correctAnswers)
   };
@@ -59,6 +86,7 @@ const Game: React.FC<GameProps> = ({ sectionIndex }) => {
 
   return (
     <div className="game">
+       <Timer timeLeft={timeLeft} />
       <button onClick={navigation?.navigateToBoard}>Go Back to Selection Page</button>
       <h1>Click the correct letter</h1>
       <div className="letters">
@@ -66,7 +94,7 @@ const Game: React.FC<GameProps> = ({ sectionIndex }) => {
           <div 
             key={index} 
            style={divStyles}
-            onClick={() => correctAnswers.size < section.letters.length? handleLetterClick(letter['unicode']): undefined}
+            onClick={() => correctAnswers.size < section.letters.length && isActive ? handleLetterClick(letter['unicode']): null}
           >
             {letter['unicode']}
           </div>
@@ -76,6 +104,12 @@ const Game: React.FC<GameProps> = ({ sectionIndex }) => {
         <div>
           Well done! You've completed this section.
           <button onClick={navigation?.navigateToBoard}>Back to Board</button>
+        </div>
+      )}
+        {!isActive && (
+        <div>
+          You need to try the game again!
+          <button onClick={()=> {setAttemptsRemaining(10); setIsActive(true)}}>Try Again</button>
         </div>
       )}
       {correctAnswers.size < section.letters.length && (

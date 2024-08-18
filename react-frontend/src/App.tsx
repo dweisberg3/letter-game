@@ -177,7 +177,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {navigation?.sectionIndex === null ? <Board /> : <Game sectionIndex={navigation!.sectionIndex} />}
+      {!navigation?.gameOn ? <Board /> : <Game sectionIndex={navigation!.selectedSections} />}
     </div>
   );
 }

@@ -98,7 +98,7 @@ export const sections = [
       alephBeis['ayin'],
       alephBeis['samech']
     ], 
-    color: 'blue' 
+    color: 'aqua' 
   },
   { 
     letters: [
@@ -108,7 +108,7 @@ export const sections = [
       alephBeis['shin'],
       alephBeis['reish']
     ], 
-    color: 'purple' 
+    color: 'rgb(170 115 187)'
   }
 ];
 

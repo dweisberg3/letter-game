@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { NavigationContext } from '../NavigationContext';
 import { sections } from '../utils/Constants';
 import Timer from './Timer';
@@ -13,8 +13,10 @@ const Game: React.FC<GameProps> = () => {
   const allLetters = selectedSectionsIndex.flatMap(index => sections[index].letters);
   const selectedSections = sections.filter((_, index) => selectedSectionsIndex.includes(index));
   const [currentLetterIndex, setCurrentLetterIndex] = useState(Math.floor(Math.random() * allLetters.length));
-  const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null); // Track correct answers
+  // const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
   const [isActive, setIsActive] = useState(false);
+  const correctAnswers = useRef<Set<string>>(new Set());
   const [playerWon, setPlayerWon] = useState(false)
   const [playerLost, setPlayerLost] = useState(false)
   const [timeLeft, setTimeLeft] = useState(100); // 2 minutes
@@ -22,12 +24,12 @@ const Game: React.FC<GameProps> = () => {
   const divStyles = {
     display: 'flex',
     justifyContent: 'center',
-    cursor: correctAnswers.size < allLetters.length && isActive ? 'pointer' : 'default',
+    cursor: correctAnswers.current.size < allLetters.length && isActive ? 'pointer' : 'default',
     alignItems: 'center',
     width: '50px',
     height: '50px',
     fontSize: '24px',
-    backgroundColor: correctAnswers.size < allLetters.length ? 'white' : 'light grey',
+    backgroundColor: correctAnswers.current.size < allLetters.length ? 'white' : 'light grey',
     border: '1px solid black',
     borderRadius: '5px',
 
@@ -35,12 +37,13 @@ const Game: React.FC<GameProps> = () => {
 
 
   const setGameOver = () => {
-    console.log('game over!!!!')
     setIsActive(!isActive)
   }
 
   const startgame = () => {
+    
     setIsActive(!isActive)
+    setAttempts(prev=> prev + 1)
   }
 
   // const getLetter =
@@ -65,12 +68,13 @@ const Game: React.FC<GameProps> = () => {
 
 
   useEffect(() => {
-    console.log(correctAnswers.size === allLetters.length)
-    if (isActive && !playerWon) {
-      
+    if (isActive) {
+      // 
+      // audio.play()
+      // console.log("inside the useeffect")
       setTimeout(() => {
+        setIsAnswerCorrect(null)
         const audio = new Audio(allLetters[currentLetterIndex]['audiofilePath']);
-
         audio.play().catch(error => {
           console.error("Error playing the audio:", error);
 
@@ -78,30 +82,32 @@ const Game: React.FC<GameProps> = () => {
       }, 500); // 500 milliseconds = 0.5 seconds
 
     }
-  }, [isActive, attempts]);
+  }, [attempts]);
   
 
   const handleLetterClick = (letter: string) => {
-    console.log(`the letter ${letter} and the obj ${JSON.stringify(allLetters[currentLetterIndex])}`)
+    
     if (letter === allLetters[currentLetterIndex]['unicode']) {
-      console.log("got ere")
-      setCorrectAnswers((prevSet) => new Set(prevSet).add(letter))
-      if (correctAnswers.size === allLetters.length) {
-        setPlayerWon(!playerWon)
+      correctAnswers.current = new Set(correctAnswers.current).add(letter)
+      setIsAnswerCorrect(true)
+      if (correctAnswers.current.size === allLetters.length) {
+        setIsActive(!isActive)
       }
       else {
+        console.log("got here!")
         setCurrentLetterIndex(Math.floor(Math.random() * allLetters.length))
-        setAttempts(attempts => ++attempts)
+
+        setAttempts(prev=> prev + 1)
+        return <button style={{color:'green'}}></button>
       }
 
     }
     else {
-      setIsActive(false)
-      setPlayerLost(true)
+      setIsActive(!isActive)
+      setPlayerLost(!playerLost)
     }
 
 
-    console.log(correctAnswers)
   };
 
 
@@ -120,14 +126,14 @@ const Game: React.FC<GameProps> = () => {
             <div
               key={index}
               style={combinedStyle}
-              onClick={() => correctAnswers.size < allLetters.length && isActive ? handleLetterClick(letter['unicode']) : null}
+              onClick={() => correctAnswers.current.size < allLetters.length && isActive ? handleLetterClick(letter['unicode']) : null}
             >
               {letter['unicode']}
             </div>
           )})}
         </div>))}
       </div>
-      {correctAnswers.size === allLetters.length && (
+      {correctAnswers.current.size === allLetters.length && (
         <div>
           Well done! You've completed this section.
           <button onClick={navigation?.navigateToBoard}>Back to Board</button>
@@ -139,6 +145,7 @@ const Game: React.FC<GameProps> = () => {
           <button onClick={() => { setTimeLeft(100); startgame() }}>Try Again</button>
         </div>
       )}
+       {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}
     </div>
   );
 };

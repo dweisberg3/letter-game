@@ -1,7 +1,17 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
+from flask_cors import CORS
 import sqlite3
 
 app = Flask(__name__)
+CORS(app)
+@app.route('/click', methods=['GET'])
+def handle_click():
+    print("got here!")
+    print(request.headers)
+    data = {
+        'message' : 'hello from the backend!'
+    }
+    return jsonify(data)
 
 @app.route('/', methods=['GET'])
 def home():

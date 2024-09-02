@@ -38,7 +38,7 @@ const Board: React.FC = () => {
       {sections.map((section, index) => (
         <Section 
           key={index} 
-          letters={section.letters.map((el) => el['unicode'])} 
+          letters={section.letters.map((el) => el['pngfilePath'])} 
           color={section.color} 
           onClick={() => handleSectionClick(index)} 
           selected={!!navigation?.selectedSections.includes(index)} 

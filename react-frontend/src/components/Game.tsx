@@ -17,7 +17,7 @@ const Game: React.FC<GameProps> = () => {
   const [isActive, setIsActive] = useState(false);
   const correctAnswers = useRef<Set<string>>(new Set());
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
-
+  const [points, setPoints] = useState<number>(0);
   const [playerWon, setPlayerWon] = useState(false)
   const [playerLost, setPlayerLost] = useState(false)
   const [timeLeft, setTimeLeft] = useState(100); // 2 minutes
@@ -32,9 +32,9 @@ const Game: React.FC<GameProps> = () => {
       justifyContent: 'center',
       cursor: correctAnswers.current.size < allLetters.length && isActive ? 'pointer' : 'default',
       alignItems: 'center',
-      width: '50px',
-      height: '50px',
-      fontSize: '24px',
+      // width: '50px',
+      // height: '50px',
+      // fontSize: '24px',
       backgroundColor: correctAnswers.current.size < allLetters.length ? 'white' : 'light grey',
       borderRadius: '5px',
       border: isclicked ? '4px solid darkgrey' : '1px solid black',
@@ -44,13 +44,54 @@ const Game: React.FC<GameProps> = () => {
   }
  
 
+  const sendData = async (username:string,points:number, lostSingleLetterGame:boolean) => {
+    const data = { username: username,
+                  points: points,
+                  lostSingleLetterGame : lostSingleLetterGame }; // Replace with your data
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/gameover', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log('Response from Flask:', result);
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+
+  }
+
+
 
   const setGameOver = () => {
     setIsActive(!isActive)
+    // user would not get here if game was single letter and there was one miss 
+    sendData('Dovid',points,false) 
   }
+
+
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(Number(event.target.value));
+    switch (Number(event.target.value)) {
+      case 1:
+        setTimeLeft(45)
+        break;
+      case 2:
+        setTimeLeft(60)
+        break;
+      case 3:
+        setTimeLeft(75)
+        break;
+      default:
+        break;
+    }
+   
     console.log(Number(event.target.value))
     console.log(Array.from({ length: Number(event.target.value) }, () => Math.floor(Math.random() * allLetters.length)))
     setSoundClipIndexArr(Array.from({ length: Number(event.target.value) }, () => Math.floor(Math.random() * allLetters.length)));
@@ -63,37 +104,11 @@ const Game: React.FC<GameProps> = () => {
       setAttempts(prev => prev + 1)
     }
 
-    // const getLetter =
-    //   setTimeout(() => {
-    //     const audio = new Audio(allLetters[currentLetterIndex]['audiofilePath']);
-
-    //     audio.play().catch(error => {
-    //       console.error("Error playing the audio:", error);
-
-    //     });
-    //   }, 500); // 500 milliseconds = 0.5 seconds
-
-
-
-
-    // useEffect(() => {
-    //   if (timeLeft === 0) {
-    //     setIsActive(false);
-    //   }
-    // }, [timeLeft]);
-
-
-
     useEffect(() => {
       if (isActive) {
-        // 
-        
-        // audio.play()
-        // console.log("inside the useeffect")
         setTimeout(() => {
           setIsAnswerCorrect(null)
-          const audioArr = soundClipIndexArr.map(index => new Audio(allLetters[index]['audiofilePath']));
-          
+          const audioArr = soundClipIndexArr.map(index => new Audio(allLetters[index]['audiofilePath'])); 
           const playAllAudio = async () => {
             for (const audio of audioArr) {
               await playAudio(audio);
@@ -101,12 +116,6 @@ const Game: React.FC<GameProps> = () => {
           };
       
           playAllAudio();
-          
-          // const audio = new Audio(allLetters[currentLetterIndex]['audiofilePath']);
-          // audio.play().catch(error => {
-          //   console.error("Error playing the audio:", error);
-
-          // });
         }, 500); // 500 milliseconds = 0.5 seconds
 
       }
@@ -119,13 +128,15 @@ const Game: React.FC<GameProps> = () => {
         audio.onended = () => resolve();
       });
     };
+
+
     const handleLetterClick = (letter: string,index:number) => {
 
       setClickedIndex(index);
-        setTimeout(() => setClickedIndex(null), 100); // Border visible for 100ms
+      setTimeout(() => setClickedIndex(null), 100); // Border visible for 100ms
       console.log(`soundClipIndexArr : ${soundClipIndexArr} and currIndex : ${currIndex}`)
       if (letter === allLetters[soundClipIndexArr[currIndex]]['unicode']) {
-        // correctAnswers.current = new Set(correctAnswers.current).add(letter)
+        setPoints(points => points += 10)
         if (currIndex === soundClipIndexArr.length - 1) {
           setIsAnswerCorrect(true)
           setSoundClipIndexArr(Array.from({ length: Number(selectedValue) }, () => Math.floor(Math.random() * allLetters.length)));
@@ -148,6 +159,7 @@ const Game: React.FC<GameProps> = () => {
       else {
         setIsActive(!isActive)
         setPlayerLost(!playerLost)
+        sendData('Dovid',points,true)
       }
 
 
@@ -184,7 +196,7 @@ const Game: React.FC<GameProps> = () => {
                   style={combinedStyle}
                   onClick={() => correctAnswers.current.size < allLetters.length && isActive ? handleLetterClick(letter['unicode'],index) : null}
                 >
-                  {letter['unicode']}
+                 <img src={letter['pngfilePath']} alt="Description of the image" />
                 </div>
               )
             })}
@@ -203,6 +215,7 @@ const Game: React.FC<GameProps> = () => {
           </div>
         )}
         {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}
+        <span>Points: {points}</span>
       </div>
     );
   };

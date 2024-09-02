@@ -167,19 +167,23 @@
 // export default App;
 
 import React, { useContext } from 'react';
-import Board from './components/Board';
-import Game from './components/Game';
+import AdminPage from './components/Admin';
+// import Board from './components/Board';
+// import Game from './components/Game';
 import { NavigationContext } from './NavigationContext';
 import './App.css';
 
 const App: React.FC = () => {
   const navigation = useContext(NavigationContext);
 
+  // return (
+  //   <div className="App">
+  //     {!navigation?.gameOn ? <Board /> : <Game sectionIndex={navigation!.selectedSections} />}
+  //   </div>
+  // );
   return (
-    <div className="App">
-      {!navigation?.gameOn ? <Board /> : <Game sectionIndex={navigation!.selectedSections} />}
-    </div>
-  );
+    <div><AdminPage></AdminPage></div>
+  )
 }
 
 export default App;

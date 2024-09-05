@@ -3,15 +3,33 @@ import { NavigationContext } from '../NavigationContext';
 import { sections } from '../utils/Constants';
 import Timer from './Timer';
 
+// interface User {
+  
+//   firstname: string;
+//   lastname: string;
+//   grade: string;
+//   username: string;
+//   password?: string; // Optional if you don't want to store it in the users list
+// }
 interface GameProps {
-  sectionIndex: number[];
+  selectedSectionsIndex: number;
+  playerUsername  :string;
+  isCumulative: boolean;
+  
 }
-
-const Game: React.FC<GameProps> = () => {
+//isCumulative={navigation!.isCumulative} sectionIndex={navigation!.selectedSectionIndex} user={playerUsername} /> ): <Navigate to="/login" />}
+const Game: React.FC<GameProps> = ({isCumulative,playerUsername,selectedSectionsIndex}) => {
   const navigation = useContext(NavigationContext);
-  const selectedSectionsIndex = navigation?.selectedSections || [];
-  const allLetters = selectedSectionsIndex.flatMap(index => sections[index].letters);
-  const selectedSections = sections.filter((_, index) => selectedSectionsIndex.includes(index));
+  
+  // const selectedSectionsIndex = navigation?.selectedSectionIndex
+  const selectedSections = sections.filter((_, index) => {
+    if(isCumulative){
+      return index <= selectedSectionsIndex!
+    }
+    else{
+      return index === selectedSectionsIndex
+    }
+    });
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null); // Track correct answers
   // const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
   const [isActive, setIsActive] = useState(false);
@@ -25,7 +43,16 @@ const Game: React.FC<GameProps> = () => {
   const [selectedValue, setSelectedValue] = useState<number>(0)
   const [soundClipIndexArr, setSoundClipIndexArr] = useState<number[]>([])
   const [currIndex, setCurrIndex] = useState<number>(0)
-
+  // let  allLetters = selectedSectionsIndex.flatMap(index => sections[index].letters);
+  let allLetters = sections[selectedSectionsIndex!].letters
+  if(isCumulative){
+    let latest_idx = selectedSectionsIndex! -1
+    while(latest_idx > -1){
+      allLetters = [...allLetters, ...sections[latest_idx].letters]
+      latest_idx--
+    }
+  }
+  console.log(allLetters)
   const getStyle = (isclicked:boolean) => {
     return {
       display: 'flex',
@@ -47,7 +74,7 @@ const Game: React.FC<GameProps> = () => {
   const sendData = async (username:string,points:number, lostSingleLetterGame:boolean) => {
     const data = { username: username,
                   points: points,
-                  lostSingleLetterGame : lostSingleLetterGame }; // Replace with your data
+                  lostSingleLetterGame : lostSingleLetterGame }; 
 
     try {
       const response = await fetch('http://127.0.0.1:5000/gameover', {
@@ -75,7 +102,7 @@ const Game: React.FC<GameProps> = () => {
   }
 
 
-
+  
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(Number(event.target.value));
     switch (Number(event.target.value)) {
@@ -100,7 +127,10 @@ const Game: React.FC<GameProps> = () => {
   }
     const startgame = () => {
 
+      setPoints(0)
+      
       setIsActive(!isActive)
+
       setAttempts(prev => prev + 1)
     }
 
@@ -159,7 +189,7 @@ const Game: React.FC<GameProps> = () => {
       else {
         setIsActive(!isActive)
         setPlayerLost(!playerLost)
-        sendData('Dovid',points,true)
+        sendData(playerUsername,points,true)
       }
 
 
@@ -172,6 +202,7 @@ const Game: React.FC<GameProps> = () => {
 
     return (
       <div className="game">
+        <div>{playerUsername}</div>
         <div>{isActive && (<Timer timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
         <div>{!isActive && (
           <><label htmlFor="letters">Letters:</label><select id="letters" name="letters" onChange={handleChange}>
@@ -210,8 +241,8 @@ const Game: React.FC<GameProps> = () => {
         )}
         {playerLost && (
           <div>
-            You need to try the game again!
-            <button onClick={() => { setTimeLeft(100); startgame() }}>Try Again</button>
+
+            <button onClick={() => { setTimeLeft(selectedValue); startgame() }}>Try Again</button>
           </div>
         )}
         {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}

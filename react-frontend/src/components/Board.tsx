@@ -1,11 +1,15 @@
 import React, { useContext, useState } from 'react';
 import Section from './Section';
+import Switch from '@mui/material/Switch';
 import { NavigationContext } from '../NavigationContext';
 import { sections } from '../utils/Constants';
+import Typography from '@mui/material/Typography';
 
-
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 const Board: React.FC = () => {
   const navigation = useContext(NavigationContext);
+  const [isCumulative, setIsCumulative] = useState<boolean>(false);
+  const [selectedSectionIndex,setSelectedSectionIndex] = useState<number>(-1);
  
 
   // const divStyles = {
@@ -16,17 +20,17 @@ const Board: React.FC = () => {
 
 
   const handleSectionClick = (index: number) => {
-    navigation?.toggleSection(index);
+    setSelectedSectionIndex(index)
   };
 
   const handleContinueClick = () => {
-    navigation?.navigateToGame();
+    console.log(isCumulative,'     ',selectedSectionIndex)
+    navigation?.navigateToGame(isCumulative,selectedSectionIndex);
   };
 
-  const handleClick = async () => {
-    const response = await fetch('http://127.0.0.1:5000/click');
-    const data = await response.json();
-    alert(data.message);
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsCumulative(event.target.checked)
+    console.log('Switch is now', event.target.checked ? 'Enabled' : 'Disabled');
   };
 
 
@@ -41,15 +45,22 @@ const Board: React.FC = () => {
           letters={section.letters.map((el) => el['pngfilePath'])} 
           color={section.color} 
           onClick={() => handleSectionClick(index)} 
-          selected={!!navigation?.selectedSections.includes(index)} 
+          selected={selectedSectionIndex === index || (isCumulative && index < selectedSectionIndex)} 
           
         />
       ))}
-       <button onClick={handleContinueClick} disabled={navigation?.selectedSections.length === 0}>
+       <button onClick={handleContinueClick} disabled={selectedSectionIndex < 0}>
         Continue
       </button>
-      <button onClick={handleClick}>click here</button>
+
+          <Typography variant="body1">Cumulative</Typography>
+      <Switch
+        // checked={isEnabled}
+        onChange={handleToggle}
+        color="primary"
+      />
     </div>
+    
   );
 };
 

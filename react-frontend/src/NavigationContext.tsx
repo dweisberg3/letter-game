@@ -33,39 +33,42 @@ import React, { createContext, useState, ReactNode } from 'react';
 
 interface NavigationContextType {
   gameOn: boolean;
-  selectedSections: number[];
-  navigateToGame: () => void;
+  selectedSectionIndex: number;
+  isCumulative:boolean;
+  navigateToGame: (cumulative:boolean,idx:number) => void;
   navigateToBoard: () => void;
-  toggleSection: (index: number) => void;
+  // toggleSection: (index: number) => void;
 }
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
 const NavigationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedSections, setSelectedSections] = useState<number[]>([]);
-  const [gameOn,setGameOn] = useState(false)
-  const navigateToGame = () => {
-    if (selectedSections.length > 0) {
-      setGameOn(!gameOn)
-      // Do nothing if no sections are selected
-    }
-  };
+  const [selectedSectionIndex,setSelectedSectionIndex] = useState<number>(-1);
+  const [gameOn,setGameOn] = useState<boolean>(false)
+  const [isCumulative,setIsCumulative] = useState<boolean>(false)
 
-  const navigateToBoard = () => {
-    setSelectedSections([]);
+  const navigateToGame = (cumulative:boolean,sectionIdx:number) => {
+    console.log(`bool : ${cumulative} and the idx : ${sectionIdx}`)
+    setIsCumulative(cumulative)
+    setSelectedSectionIndex(sectionIdx)
     setGameOn(!gameOn)
   };
 
-  const toggleSection = (index: number) => {
-    setSelectedSections((prev) =>
-      prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : [...prev, index]
-    );
+  const navigateToBoard = () => {
+    // setSelectedSections([]);
+    setGameOn(!gameOn)
   };
 
+  // const toggleSection = (index: number) => {
+  //   setSelectedSections((prev) =>
+  //     prev.includes(index)
+  //       ? prev.filter((i) => i !== index)
+  //       : [...prev, index]
+  //   );
+  // };
+
   return (
-    <NavigationContext.Provider value={{ gameOn, selectedSections, navigateToGame, navigateToBoard, toggleSection }}>
+    <NavigationContext.Provider value={{ gameOn, selectedSectionIndex, isCumulative, navigateToGame, navigateToBoard}}>
       {children}
     </NavigationContext.Provider>
   );

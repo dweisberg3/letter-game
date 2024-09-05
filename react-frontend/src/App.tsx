@@ -19,6 +19,8 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [playerUsername,setPlayerUsername] = useState<string>('');
   const navigation = useContext(NavigationContext);
+  const [gameOn,setGameOn] = useState<boolean>(false)
+
 
   const handleLogin = async (username:string, password:string) => {
     const formData = new FormData();
@@ -39,8 +41,12 @@ function App() {
         console.log("weee in!")
       } else if (authenticationStatus === "Regular") {
         setIsAdmin(false);
-        setPlayerUsername(username)
+        // setPlayerUsername(username)
         setIsAuthenticated(true);
+        // setGameOn(!gameOn)
+        // navigation?.gameOn()
+        console.log("he regular     ",navigation?.gameOn)
+
       }
       else{
         console.log("nope!!")

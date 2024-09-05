@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { NavigationContext } from '../NavigationContext';
 import { sections } from '../utils/Constants';
 import Timer from './Timer';
+import './Game.css'; // Import the CSS file
 
 // interface User {
   
@@ -214,7 +215,7 @@ const Game: React.FC<GameProps> = ({isCumulative,playerUsername,selectedSections
         <button onClick={navigation?.navigateToBoard}>Go Back to Selection Page</button>
         <span>Click the correct letter</span>
         <div>{selectedSections.map((section) => (
-          <div className="letters" style={{ margin: '10px' }}>
+          <div className={section.css_id} >
             {section.letters.map((letter, index) => {
               // const combinedStyle = { ...divStyles, backgroundColor: section.color };
               const isClicked = index === clickedIndex;

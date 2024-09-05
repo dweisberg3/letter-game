@@ -60,7 +60,8 @@ export const sections = [
       alephBeis['beis'],
      alephBeis['aleph'] 
     ], 
-    color: 'yellow' 
+    color: 'yellow',
+    css_id: 'top-right container' 
   },
   { 
     letters: [
@@ -70,47 +71,51 @@ export const sections = [
       alephBeis['zayin'],
       alephBeis['vav']
     ], 
-    color: 'orange' 
+    color: 'orange',
+    css_id: 'top-left container' 
   },
-  // { 
-  //   letters: [
+  { 
+    letters: [
     
-  //    alephBeis['nunSofis'],
-  //    alephBeis['nun'],
-  //    alephBeis['memSofis'],
-  //    alephBeis['mem'],
-  //   alephBeis['lamed'],
-  //   alephBeis['chofSofis'],
-  //   alephBeis['chof'],
-  //    alephBeis['kafSofis'],
-  //    alephBeis['kaf']
+     alephBeis['nunSofis'],
+     alephBeis['nun'],
+     alephBeis['memSofis'],
+     alephBeis['mem'],
+    alephBeis['lamed'],
+    alephBeis['chofSofis'],
+    alephBeis['chof'],
+     alephBeis['kafSofis'],
+     alephBeis['kaf']
       
-  //   ], 
-  //   color: 'red' 
-  // },
-  // { 
-  //   letters: [
-  //     alephBeis['koof'],
-  //    alephBeis['tzadiSofis'],
-  //    alephBeis['tzadi'],
-  //   alephBeis['feySofis'],
-  //     alephBeis['fey'],
-  //     alephBeis['pey'],
-  //     alephBeis['ayin'],
-  //     alephBeis['samech']
-  //   ], 
-  //   color: 'aqua' 
-  // },
-  // { 
-  //   letters: [
-  //     alephBeis['sav'],
-  //     alephBeis['tav'],
-  //     alephBeis['sin'],
-  //     alephBeis['shin'],
-  //     alephBeis['reish']
-  //   ], 
-  //   color: 'rgb(170 115 187)'
-  // }
+    ], 
+    color: 'red' ,
+    css_id: 'middle-right container'
+  },
+  { 
+    letters: [
+      alephBeis['koof'],
+     alephBeis['tzadiSofis'],
+     alephBeis['tzadi'],
+    alephBeis['feySofis'],
+      alephBeis['fey'],
+      alephBeis['pey'],
+      alephBeis['ayin'],
+      alephBeis['samech']
+    ], 
+    color: 'aqua',
+    css_id: 'middle-left container'
+  },
+  { 
+    letters: [
+      alephBeis['sav'],
+      alephBeis['tav'],
+      alephBeis['sin'],
+      alephBeis['shin'],
+      alephBeis['reish']
+    ], 
+    color: 'rgb(170 115 187)',
+    css_id:'bottom-center container'
+  }
 ];
 
 // export class AlephBeis {

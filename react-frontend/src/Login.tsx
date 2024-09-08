@@ -4,7 +4,12 @@ import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-const Login: React.FC = () => {
+
+interface LoginProps {
+  handleUserName:(username:string) => void;
+}
+
+const Login: React.FC<LoginProps> = ({handleUserName}) => {
   const [formValues, setFormValues] = useState({ username: '', password: '' });
   const [error, setError] = useState(false);
   const navigate = useNavigate();
@@ -15,7 +20,7 @@ const Login: React.FC = () => {
     const formData = new FormData();
     formData.append('username', formValues.username);
     formData.append('password', formValues.password);
-    
+    handleUserName(formValues.username)
     try {
       const response = await fetch('http://127.0.0.1:5000/login', {
         method: 'POST',

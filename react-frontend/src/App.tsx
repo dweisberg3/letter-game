@@ -15,31 +15,26 @@ function App() {
   const [isCumulative, setIsCumulative] = useState<boolean>(false);
   const [selectedSectionsIndex, setSelectedSectionsIndex] = useState<number>(0);
 
-  const handleIndexSelect = (index: number) => {
-    setSelectedSectionsIndex(index);
-  };
+  const handleGameParams = (index:number,toggle:boolean) => {
+    setIsCumulative(toggle)
+    setSelectedSectionsIndex(index)
+  }
 
-  const handleIsCumulative = (toggle: boolean) => {
-    setIsCumulative(toggle);
-  };
-
-  const handleContinue = () => {
-    // Navigation logic if needed
-  };
+  const handleUserName = (username:string) => {
+    setPlayerUsername(username)
+  }
 
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login handleUserName={handleUserName} />} />
           <Route
             path="/board"
             element={
               <ProtectedRoute>
                 <Board
-                  handleIndexSelect={handleIndexSelect}
-                  handleIsCumulative={handleIsCumulative}
-                  handleContinue={handleContinue}
+                  handleGameParams={handleGameParams}
                 />
               </ProtectedRoute>
             }

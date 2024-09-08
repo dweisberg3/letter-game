@@ -7,30 +7,31 @@ import { useNavigate } from 'react-router-dom';
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 interface BoardProps {
-  handleIndexSelect:(index:number) => void;
-  handleIsCumulative:(isCumulative:boolean) => void;
-  handleContinue: ()=>void;
+  // handleIndexSelect:(index:number) => void;
+  // handleIsCumulative:(isCumulative:boolean) => void;
+  handleGameParams: (index:number,isCumulative:boolean) => void;
+
 
 }
-const Board: React.FC<BoardProps> = ({handleIndexSelect,handleIsCumulative,handleContinue}) => {
+const Board: React.FC<BoardProps> = ({handleGameParams}) => {
   const [isCumulative, setIsCumulative] = useState<boolean>(false);
   const [selectedSectionIndex,setSelectedSectionIndex] = useState<number>(-1);
   const navigate = useNavigate();
 
   const handleSectionClick = (index: number) => {
     setSelectedSectionIndex(index)
-    handleIndexSelect(index)
+    // handleIndexSelect(index)
   };
 
   const handleContinueClick = () => {
+    handleGameParams(selectedSectionIndex,isCumulative)
     console.log(isCumulative, '     ', selectedSectionIndex);
-    handleContinue();
     navigate('/game'); // Navigate to the Game route
   };
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsCumulative(event.target.checked)
-    handleIsCumulative(event.target.checked)
+    // handleIsCumulative(event.target.checked)
   };
 
   return (

@@ -153,7 +153,6 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         setAttempts(prev => prev + 1)
       }
       else {
-        console.log("got here!")
         setCurrIndex(currIndex => currIndex += 1)
       }
 
@@ -167,7 +166,9 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
 
   return (
     <div className="game">
-      <div>{playerUsername}</div>
+      <div>username :  {playerUsername}</div>
+      <div>cumulative :  {isCumulative.toString()}</div>
+      <div>index  : {selectedSectionsIndex}</div>
       <div>{isActive && (<Timer timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
       <div>{!isActive && (<>
         <FormControl fullWidth variant="outlined" sx={{ minWidth: 70,marginBottom: 2 }}>

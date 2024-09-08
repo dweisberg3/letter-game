@@ -72,50 +72,50 @@ export const sections = [
       alephBeis['vav']
     ], 
     color: 'orange',
-    css_id: 'top-left container' 
-  },
-  { 
-    letters: [
+    css_id: 'top-left container' }
+  // },
+  // { 
+  //   letters: [
     
-     alephBeis['nunSofis'],
-     alephBeis['nun'],
-     alephBeis['memSofis'],
-     alephBeis['mem'],
-    alephBeis['lamed'],
-    alephBeis['chofSofis'],
-    alephBeis['chof'],
-     alephBeis['kafSofis'],
-     alephBeis['kaf']
+  //    alephBeis['nunSofis'],
+  //    alephBeis['nun'],
+  //    alephBeis['memSofis'],
+  //    alephBeis['mem'],
+  //   alephBeis['lamed'],
+  //   alephBeis['chofSofis'],
+  //   alephBeis['chof'],
+  //    alephBeis['kafSofis'],
+  //    alephBeis['kaf']
       
-    ], 
-    color: 'red' ,
-    css_id: 'middle-right container'
-  },
-  { 
-    letters: [
-      alephBeis['koof'],
-     alephBeis['tzadiSofis'],
-     alephBeis['tzadi'],
-    alephBeis['feySofis'],
-      alephBeis['fey'],
-      alephBeis['pey'],
-      alephBeis['ayin'],
-      alephBeis['samech']
-    ], 
-    color: 'aqua',
-    css_id: 'middle-left container'
-  },
-  { 
-    letters: [
-      alephBeis['sav'],
-      alephBeis['tav'],
-      alephBeis['sin'],
-      alephBeis['shin'],
-      alephBeis['reish']
-    ], 
-    color: 'rgb(170 115 187)',
-    css_id:'bottom-center container'
-  }
+  //   ], 
+  //   color: 'red' ,
+  //   css_id: 'middle-right container'
+  // },
+  // { 
+  //   letters: [
+  //     alephBeis['koof'],
+  //    alephBeis['tzadiSofis'],
+  //    alephBeis['tzadi'],
+  //   alephBeis['feySofis'],
+  //     alephBeis['fey'],
+  //     alephBeis['pey'],
+  //     alephBeis['ayin'],
+  //     alephBeis['samech']
+  //   ], 
+  //   color: 'aqua',
+  //   css_id: 'middle-left container'
+  // },
+  // { 
+  //   letters: [
+  //     alephBeis['sav'],
+  //     alephBeis['tav'],
+  //     alephBeis['sin'],
+  //     alephBeis['shin'],
+  //     alephBeis['reish']
+  //   ], 
+  //   color: 'rgb(170 115 187)',
+  //   css_id:'bottom-center container'
+  // }
 ];
 
 // export class AlephBeis {

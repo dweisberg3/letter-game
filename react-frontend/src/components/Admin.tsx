@@ -5,6 +5,8 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogContentText,
   DialogTitle, TextField, Paper
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 interface User {
   id: number; // to give each user a new key for react components .. not stored in db
@@ -31,7 +33,13 @@ const AdminPage: React.FC = () => {
     
   });
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
+  const handleSignOut = () => {
+    logout(); // Clear the authentication state
+    navigate('/login'); // Redirect to login page
+  };
    // Function to fetch users from the API
   const fetchUsers = async () => {
     try {
@@ -243,6 +251,15 @@ const AdminPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Button 
+          variant="contained" 
+          color="secondary" 
+          onClick={handleSignOut}
+          sx={{ mt: 2, margin:'10px' }}
+        >
+          Sign Out
+        </Button>
     </div>
   );
 };

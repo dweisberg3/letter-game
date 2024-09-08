@@ -1,49 +1,48 @@
 
-import React, { useState, ChangeEvent, FormEvent, FormEventHandler } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
-interface LoginFormState {
-  username: string;
-  password: string;
-}
+const Login: React.FC = () => {
+  const [formValues, setFormValues] = useState({ username: '', password: '' });
+  const [error, setError] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-interface LoginProps {
-  onLogin: (username:string,password:string) => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [formData, setFormData] = useState<LoginFormState>({
-    username: '',
-    password: '',
-  });
-
-    const navigate = useNavigate();
-
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    onLogin(formData.username, formData.password);
-    if (formData.username === 'admin' && formData.password === 'admin') {
-      navigate('/admin');
-    } else {
-      navigate('/letter-game');
+    const formData = new FormData();
+    formData.append('username', formValues.username);
+    formData.append('password', formValues.password);
+    
+    try {
+      const response = await fetch('http://127.0.0.1:5000/login', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.message === "Admin" || result.message === "Regular") {
+        login(result.message);
+        navigate(result.message === "Admin" ? '/admin' : '/board');
+      } else {
+        setError(true);
+      }
+    } catch (error) {
+      console.error('Error sending data:', error);
+      setError(true);
     }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormValues({ ...formValues, [name]: value });
   };
-
-  // const handleSubmit = (e: FormEvent) => {
-  //   e.preventDefault();
-  //   // Handle login logic here (e.g., API call)
-  //   console.log('Login submitted', formData);
-  // };
 
   return (
     <Container maxWidth="sm">
-      <Box 
+       <Box 
         display="flex" 
         flexDirection="column" 
         alignItems="center" 
@@ -60,7 +59,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <TextField
             label="Username"
             name="username"
-            value={formData.username}
+            value={formValues.username}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -70,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             label="Password"
             name="password"
             type="password"
-            value={formData.password}
+            value={formValues.password}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -85,6 +84,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           >
             Login
           </Button>
+          {error && (
+          <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+            Authorization failed. Please check your username and password.
+          </Typography>
+        )}
         </form>
       </Box>
     </Container>
@@ -92,4 +96,3 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 };
 
 export default Login;
-

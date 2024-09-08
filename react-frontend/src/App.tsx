@@ -1,103 +1,74 @@
 
-
-import React, { useContext, useState } from 'react';
+// App.tsx
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
 import Login from './Login';
-import { User } from './domain/User';
-// import LetterGame from './LetterGame';
-// import Admin from './Admin';
-// import Board from './components/Board';
 import Board from './components/Board';
 import Game from './components/Game';
-import { NavigationContext } from './NavigationContext';
-import './App.css';
 import AdminPage from './components/Admin';
-
+import ProtectedRoute from './ProtectedRoute';
+import './App.css';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [playerUsername,setPlayerUsername] = useState<string>('');
-  const navigation = useContext(NavigationContext);
-  const [gameOn,setGameOn] = useState<boolean>(false)
+  const [playerUsername, setPlayerUsername] = useState<string>('');
+  const [isCumulative, setIsCumulative] = useState<boolean>(false);
+  const [selectedSectionsIndex, setSelectedSectionsIndex] = useState<number>(0);
 
+  const handleIndexSelect = (index: number) => {
+    setSelectedSectionsIndex(index);
+  };
 
-  const handleLogin = async (username:string, password:string) => {
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
-    let authenticationStatus = ''
-    try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
-        method: 'POST',
-        body: formData,
-      });
+  const handleIsCumulative = (toggle: boolean) => {
+    setIsCumulative(toggle);
+  };
 
-      const result = await response.json();
-      authenticationStatus = result.message
-      if (authenticationStatus=== "Admin") {
-        setIsAdmin(true);
-        setIsAuthenticated(true);
-        console.log("weee in!")
-      } else if (authenticationStatus === "Regular") {
-        setIsAdmin(false);
-        // setPlayerUsername(username)
-        setIsAuthenticated(true);
-        // setGameOn(!gameOn)
-        // navigation?.gameOn()
-        console.log("he regular     ",navigation?.gameOn)
-
-      }
-      else{
-        console.log("nope!!")
-      }
-    } catch (error) {
-      console.error('Error sending data:', error);
-    }
-   return authenticationStatus
+  const handleContinue = () => {
+    // Navigation logic if needed
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin}  />} />
-        <Route
-          path="/letter-game"
-          element={isAuthenticated && !isAdmin ? (!navigation?.gameOn ? <Board /> : <Game isCumulative={navigation!.isCumulative} selectedSectionsIndex={navigation!.selectedSectionIndex} playerUsername={playerUsername} /> ): <Navigate to="/login" />}
-        />
-        <Route
-          path="/admin"
-          element={isAuthenticated && isAdmin ? <AdminPage /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="*"
-          element={<Navigate to="/login" />}
-        />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/board"
+            element={
+              <ProtectedRoute>
+                <Board
+                  handleIndexSelect={handleIndexSelect}
+                  handleIsCumulative={handleIsCumulative}
+                  handleContinue={handleContinue}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game"
+            element={
+              <ProtectedRoute>
+                <Game
+                  isCumulative={isCumulative}
+                  selectedSectionsIndex={selectedSectionsIndex}
+                  playerUsername={playerUsername}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="Admin">
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
 export default App;
-
-
-// import Board from './components/Board';
-// import Game from './components/Game';
-// import { NavigationContext } from './NavigationContext';
-// import './App.css';
-
-// const App: React.FC = () => {
-//   const navigation = useContext(NavigationContext);
-
-//   // return (
-//   //   <div className="App">
-//   //     {!navigation?.gameOn ? <Board /> : <Game sectionIndex={navigation!.selectedSections} />}
-//   //   </div>
-//   // );
-//   return (
-//     <div><AdminPage></AdminPage></div>
-//   )
-// }
-
-// export default App;
-

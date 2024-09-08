@@ -24,7 +24,7 @@ const Section: React.FC<SectionProps> = ({ letters, color, onClick, selected }) 
       {letters.map((letter, index) => (
         <div key={index} >
           
-          <img src={letter} alt="Description of the image" />
+          <img src={letter} style={{width:'100px', height: '100px'}}       alt="Description of the image" />
         </div>
       ))}
     </div>

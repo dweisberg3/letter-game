@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { sections } from '../utils/Constants';
 import Timer from './Timer';
 import './Game.css'; // Import the CSS file
@@ -27,7 +27,6 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
   const correctAnswers = useRef<Set<string>>(new Set());
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
   const [points, setPoints] = useState<number>(0);
-  const [playerWon, setPlayerWon] = useState(false)
   const [playerLost, setPlayerLost] = useState(false)
   const [timeLeft, setTimeLeft] = useState(100); // 2 minutes
   const [attempts, setAttempts] = useState(0)
@@ -71,7 +70,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/gameover', {
+      const response = await fetch('https://dweisberg.pythonanywhere.com/gameover', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

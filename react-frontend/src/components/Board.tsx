@@ -5,7 +5,6 @@ import { sections } from '../utils/Constants';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 
-const label = { inputProps: { 'aria-label': 'Switch demo' } };
 interface BoardProps {
   // handleIndexSelect:(index:number) => void;
   // handleIsCumulative:(isCumulative:boolean) => void;

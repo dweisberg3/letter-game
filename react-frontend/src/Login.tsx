@@ -9,6 +9,11 @@ interface LoginProps {
   handleUserName:(username:string) => void;
 }
 
+interface AuthResponse {
+  authenticated:boolean;
+  admin:boolean;
+}
+
 const Login: React.FC<LoginProps> = ({handleUserName}) => {
   const [formValues, setFormValues] = useState({ username: '', password: '' });
   const [error, setError] = useState(false);
@@ -22,15 +27,23 @@ const Login: React.FC<LoginProps> = ({handleUserName}) => {
     formData.append('password', formValues.password);
     handleUserName(formValues.username)
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
+      const response = await fetch('https://dweisberg.pythonanywhere.com/login', {
         method: 'POST',
         body: formData,
       });
 
-      const result = await response.json();
-      if (result.message === "Admin" || result.message === "Regular") {
-        login(result.message);
-        navigate(result.message === "Admin" ? '/admin' : '/board');
+      const result : AuthResponse = await response.json();
+      console.log(result)
+      if(response)
+      if (result.authenticated){
+        if(result.admin){
+          login("Admin");
+          navigate('/admin');
+        }
+        else{
+          login("me")
+          navigate('/board')
+        }
       } else {
         setError(true);
       }

@@ -43,7 +43,7 @@ const AdminPage: React.FC = () => {
    // Function to fetch users from the API
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/get_users'); // Replace with your API endpoint
+      const response = await fetch('https://dweisberg.pythonanywhere.com/get_users'); // Replace with your API endpoint
       const data = await response.json();
       console.log(data)
       let id = 1;
@@ -65,7 +65,7 @@ const AdminPage: React.FC = () => {
     formData.append('password', newUser.password);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/create_user', {
+      const response = await fetch('https://dweisberg.pythonanywhere.com/create_user', {
         method: 'POST',
         body: formData,
       });
@@ -75,6 +75,7 @@ const AdminPage: React.FC = () => {
         const createdUser: User = {id:users.length+1,firstname:user[1],lastname:user[2],grade:user[3],username:user[4],password:user[5]}
         setUsers([...users, createdUser]);
       } else {
+        alert('Username already exists');
         console.error('Error adding user:', response.statusText);
       }
     } catch (error) {
@@ -84,7 +85,7 @@ const AdminPage: React.FC = () => {
 
   const getRecords = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/get_records', {
+      const response = await fetch('https://dweisberg.pythonanywhere.com/get_records', {
         method: 'GET', // or 'PUT', 'PATCH' etc.
         headers: {
           'Content-Type': 'application/json',

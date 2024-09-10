@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { sections } from '../utils/Constants';
+import React, { useState, useEffect } from 'react';
+import { sections ,host_api} from '../utils/Constants';
 import Timer from './Timer';
 import './Game.css'; // Import the CSS file
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
@@ -22,9 +22,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     }
   });
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null); // Track correct answers
-  // const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
   const [isActive, setIsActive] = useState(false);
-  const correctAnswers = useRef<Set<string>>(new Set());
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
   const [points, setPoints] = useState<number>(0);
   const [playerLost, setPlayerLost] = useState(false)
@@ -51,26 +49,29 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     return {
       display: 'flex',
       justifyContent: 'center',
-      cursor: correctAnswers.current.size < allLetters.length && isActive ? 'pointer' : 'default',
+      cursor: isActive ? 'pointer' : 'default',
       alignItems: 'center',
       // width: '50px',
       // height: '50px',
       // fontSize: '24px',
-      backgroundColor: correctAnswers.current.size < allLetters.length ? 'white' : 'light grey',
+      backgroundColor: isActive ? 'white' : 'light grey',
       borderRadius: '5px',
       border: isclicked ? '4px solid darkgrey' : '1px solid black',
     }
   }
 
-  const sendData = async (username: string, points: number, lostSingleLetterGame: boolean) => {
+  const sendData = async (lostSingleLetterGame: boolean) => {
     const data = {
-      username: username,
+      username: playerUsername,
       points: points,
-      lostSingleLetterGame: lostSingleLetterGame
+      letter_level: numOfLetters,
+      selected_sections_index:selectedSectionsIndex,
+      is_cumulative : isCumulative,
+      lost_single_letter_game: lostSingleLetterGame
     };
 
     try {
-      const response = await fetch('https://dweisberg.pythonanywhere.com/gameover', {
+      const response = await fetch(`${host_api}/gameover`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,15 +86,16 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
   }
 
   const setGameOver = () => {
+    console.log("game over time out!")
     setIsActive(!isActive)
     // user would not get here if game was single letter and there was one miss 
-    sendData('Dovid', points, false)
+    sendData(false)
   }
   const handleChange = (event: SelectChangeEvent<number>) => {
     setNumOfLetters(Number(event.target.value)); // Ensure the value is converted to number
     switch (Number(event.target.value)) {
       case 1:
-        setTimeLeft(45)
+        setTimeLeft(45) // 45
         break;
       case 2:
         setTimeLeft(60)
@@ -152,22 +154,36 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         setAttempts(prev => prev + 1)
       }
       else {
+        setIsAnswerCorrect(true)
         setCurrIndex(currIndex => currIndex += 1)
       }
 
     }
     else {
-      setIsActive(!isActive)
-      setPlayerLost(!playerLost)
-      sendData(playerUsername, points, true)
+      setIsAnswerCorrect(false)
+      if(numOfLetters === 1){
+        setIsActive(!isActive)
+        setPlayerLost(!playerLost)
+        sendData(true)
+      }
+      else{
+        
+        if (currIndex === soundClipIndexArr.length - 1) {
+          setSoundClipIndexArr(Array.from({ length: Number(numOfLetters) }, () => Math.floor(Math.random() * allLetters.length)));
+          setCurrIndex(0)
+          setAttempts(prev => prev + 1)
+        }
+        else{
+          setCurrIndex(currIndex => currIndex += 1)
+        }
+       
+      }
+      
     }
   };
 
   return (
     <div className="game">
-      <div>username :  {playerUsername}</div>
-      <div>cumulative :  {isCumulative.toString()}</div>
-      <div>index  : {selectedSectionsIndex}</div>
       <div>{isActive && (<Timer timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
       <div>{!isActive && (<>
         <FormControl fullWidth variant="outlined" sx={{ minWidth: 70,marginBottom: 2 }}>
@@ -198,8 +214,8 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         </Button>
                      </>)}
       </div>
-      <button onClick={handleGoBack}>Go Back to Selection Page</button>
-      <span>Click the correct letter</span>
+      <button onClick={handleGoBack}>Back to Selection</button>
+    
       <div>{selectedSections.map((section) => (
         <div className={section.css_id} >
           {section.letters.map((letter, index) => {
@@ -211,7 +227,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
               <div
                 key={index}
                 style={combinedStyle}
-                onClick={() => correctAnswers.current.size < allLetters.length && isActive ? handleLetterClick(letter['unicode'], index) : null}
+                onClick={() => isActive ? handleLetterClick(letter['unicode'], index) : null}
               >
                 <img src={letter['pngfilePath']} style={{ width: '120px', height: '120px' }} alt="Description of the image" />
               </div>
@@ -219,12 +235,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
           })}
         </div>))}
       </div>
-      {correctAnswers.current.size === allLetters.length && (
-        <div>
-          Well done! You've completed this section.
-          <button onClick={handleGoBack}>Back to Board</button>
-        </div>
-      )}
+
       {playerLost && (
         <div>
 
@@ -232,6 +243,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         </div>
       )}
       {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}
+      {isAnswerCorrect ===false && <h3 style={{ color: 'red' }}>Incorrect</h3>}
       <span>Points: {points}</span>
     </div>
   );

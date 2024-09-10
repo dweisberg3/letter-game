@@ -1,5 +1,7 @@
 const AUDIO_PATH = "../../public/letter_audio_files/";
 const PNG_PATH = "../../public/letter_image_files/"
+// const host_api = "https://dweisberg.pythonanywhere.com"
+export const host_api =   "http://127.0.0.1:5000"
 interface Letter {
   unicode: string;
   audiofilePath: string;

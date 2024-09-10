@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { host_api } from '../utils/Constants';
 
 interface User {
   id: number; // to give each user a new key for react components .. not stored in db
@@ -17,9 +18,30 @@ interface User {
   password:string;
 }
 
+interface Record {
+  id: number;
+  username: string;
+  points: number;
+  letter_level:number;
+  selected_sections_index:number;
+  is_cumulative:boolean;
+  one_letter_game_with_miss: boolean;
+  timestamp: string;
+}
+// record = {
+//   "id": el[0],
+//   "username": el[1],
+//   "points":el[2],
+//   "letter_level":el[3],
+//   "is_cumulative":bool(el[4]),
+//   "one_letter_game_with_miss":bool(el[5]),
+//   "timestamp":el[6]
+
+// }
+
 const AdminPage: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
-  const [userRecord,setUserRecord] = useState<any>();
+  const [userRecords,setUserRecords] = useState<Record[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -43,12 +65,10 @@ const AdminPage: React.FC = () => {
    // Function to fetch users from the API
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://dweisberg.pythonanywhere.com/get_users'); // Replace with your API endpoint
+      const response = await fetch(`${host_api}/get_users`); // Replace with your API endpoint
       const data = await response.json();
-      console.log(data)
       let id = 1;
       const allUsers: User[] = data.map((el:User) => ({id:id++,firstname:el.firstname,lastname:el.lastname,grade:el.grade,username:el.username,password:el.password}))
-      console.log(allUsers)
       setUsers(allUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -65,7 +85,7 @@ const AdminPage: React.FC = () => {
     formData.append('password', newUser.password);
 
     try {
-      const response = await fetch('https://dweisberg.pythonanywhere.com/create_user', {
+      const response = await fetch(`${host_api}/create_user`, {
         method: 'POST',
         body: formData,
       });
@@ -83,22 +103,21 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const getRecords = async () => {
+  const getRecords = async (user:string) => {
     try {
-      const response = await fetch('https://dweisberg.pythonanywhere.com/get_records', {
+      const response = await fetch(`${host_api}/get_records?username=${encodeURIComponent(user)}`,{
         method: 'GET', // or 'PUT', 'PATCH' etc.
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({user:selectedUser?.username}), // Convert JavaScript object to JSON
+        }
       });
     
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const result = await response.json(); // Parse JSON response
-      setUserRecord(result)
-      console.log('Success:', result);
+      const data = await response.json(); // Parse JSON response
+      const records: Record[] = data.map((el:Record) => ({id:el.id,username:el.username,points:el.points,letter_level:el.letter_level,selected_sections_index:el.selected_sections_index,is_cumulative:el.is_cumulative,one_letter_game_with_miss:el.one_letter_game_with_miss,timestamp:el.timestamp}))
+      setUserRecords(records)
     } catch (error) {
       console.error('Error:', error);
     }
@@ -109,15 +128,15 @@ const AdminPage: React.FC = () => {
   }, []);
 
   
-  const handleOpenDetailDialog = (user: User) => {
+  const handleOpenDetailDialog = async (user: User) => {
     setSelectedUser(user);
-    getRecords();
+    await getRecords(user.username);
     setOpenDetailDialog(true);
   };
 
   const handleCloseDetailDialog = () => {
     setOpenDetailDialog(false);
-    setSelectedUser(null);
+    // setSelectedUser(null);
   };
 
   const handleOpenAddDialog = () => {
@@ -177,31 +196,40 @@ const AdminPage: React.FC = () => {
         Add User
       </Button>
 
-      {/* Detail Dialog */}
-      <Dialog open={openDetailDialog} onClose={handleCloseDetailDialog}>
-        <DialogTitle>User Details</DialogTitle>
-        <DialogContent>
-          {selectedUser && (
-            <>
-              <DialogContentText>
-                Name: {selectedUser.firstname} {selectedUser.lastname}
-              </DialogContentText>
-              <DialogContentText>
-                Password: {selectedUser.password}
-              </DialogContentText>
-              <DialogContentText>
-                {userRecord}
-              </DialogContentText>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDetailDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
 
+ {/* Dialog containing the scrollable table */}
+ <Dialog open={openDetailDialog} onClose={handleCloseDetailDialog} maxWidth="md" fullWidth>
+        <DialogTitle>{`${selectedUser?.firstname} ${selectedUser?.lastname}'s Stats`}</DialogTitle>
+        <DialogContent>
+          <TableContainer component={Paper}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Points</TableCell>
+                  <TableCell>Section Selected</TableCell>
+                  <TableCell>Num. of Letters</TableCell>
+                  <TableCell>Cumulative</TableCell>
+                  <TableCell>Made Mistake with Single Letter</TableCell>
+                  <TableCell>Date</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {userRecords.map((attempt:Record, index:number) => (
+                  <TableRow key={index}>
+                    <TableCell>{attempt.points}</TableCell>
+                    <TableCell>{attempt.selected_sections_index}</TableCell>
+                    <TableCell>{attempt.letter_level}</TableCell>
+                    <TableCell>{attempt.is_cumulative ? "Yes" : "No"}</TableCell>
+                    <TableCell>{attempt.one_letter_game_with_miss ? "Yes" : "No"}</TableCell>
+                    <TableCell>{attempt.timestamp}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+      </Dialog>
+     
       {/* Add User Dialog */}
       <Dialog open={openAddDialog} onClose={handleCloseAddDialog}>
         <DialogTitle>Add New User</DialogTitle>

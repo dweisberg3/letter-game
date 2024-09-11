@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { sections ,host_api} from '../utils/Constants';
 import Timer from './Timer';
 import './Game.css'; // Import the CSS file
-import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 interface GameProps {
@@ -184,8 +184,9 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
 
   return (
     <div className="game">
-      <div>{isActive && (<Timer timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
-      <div>{!isActive && (<>
+      <div className="center-div">{isActive && (<Timer  timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
+      <div style= {{ position:"fixed", top:"5%", left:"45%", padding:"10px"}}
+          >{!isActive && (<>
         <FormControl fullWidth variant="outlined" sx={{ minWidth: 70,marginBottom: 2 }}>
           <InputLabel id="num-of-letters-label">Letters</InputLabel>
           <Select
@@ -214,7 +215,13 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         </Button>
                      </>)}
       </div>
-      <button onClick={handleGoBack}>Back to Selection</button>
+      <Button 
+          variant="contained" 
+          color="secondary" 
+          onClick={handleGoBack}
+          style= {{ position:"fixed", bottom:"20px", left:"50px", marginLeft:"20px" }}
+        >
+          Back to Board</Button>
     
       <div>{selectedSections.map((section) => (
         <div className={section.css_id} >
@@ -222,29 +229,32 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
             // const combinedStyle = { ...divStyles, backgroundColor: section.color };
             const isClicked = index === clickedIndex;
             const thestyle = getStyle(isClicked)
-            const combinedStyle = { ...thestyle, backgroundColor: section.color };
+            const combinedStyle = { ...thestyle};
             return (
               <div
                 key={index}
                 style={combinedStyle}
                 onClick={() => isActive ? handleLetterClick(letter['unicode'], index) : null}
               >
-                <img src={letter['pngfilePath']} style={{ width: '120px', height: '120px' }} alt="Description of the image" />
+                <img src={letter['pngfilePath']} style={{ width: '85px', height: '100px' }}  />
               </div>
             )
           })}
         </div>))}
       </div>
-
-      {playerLost && (
-        <div>
-
-          <button onClick={() => { setTimeLeft(numOfLetters); startgame() }}>Try Again</button>
-        </div>
-      )}
       {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}
       {isAnswerCorrect ===false && <h3 style={{ color: 'red' }}>Incorrect</h3>}
-      <span>Points: {points}</span>
+  
+      <Typography component="span" 
+                  color="primary" 
+                  variant="body1"
+                  sx= {{ position:"fixed", bottom:"5%", right:"8%" , color: 'black', 
+                  fontSize: '24px', 
+                  fontWeight: 'bold' }}>
+      Points: {points}
+    </Typography>
+    
+     
     </div>
   );
 };

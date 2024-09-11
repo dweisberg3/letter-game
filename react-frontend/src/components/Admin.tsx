@@ -220,7 +220,7 @@ const AdminPage: React.FC = () => {
                     <TableCell>{attempt.selected_sections_index}</TableCell>
                     <TableCell>{attempt.letter_level}</TableCell>
                     <TableCell>{attempt.is_cumulative ? "Yes" : "No"}</TableCell>
-                    <TableCell>{attempt.one_letter_game_with_miss ? "Yes" : "No"}</TableCell>
+                    <TableCell>{attempt.letter_level === 1 ? (attempt.one_letter_game_with_miss ? "Yes" : "No") : "N/A"}</TableCell>
                     <TableCell>{attempt.timestamp}</TableCell>
                   </TableRow>
                 ))}

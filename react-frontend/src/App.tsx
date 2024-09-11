@@ -35,6 +35,7 @@ function App() {
               <ProtectedRoute>
                 <Board
                   handleGameParams={handleGameParams}
+                  playerUsername={playerUsername}
                 />
               </ProtectedRoute>
             }

@@ -1,34 +1,4 @@
-/*.container {
-    display: flex;
-    gap: 10px; 
-  }
-  
-  .top-right {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-  }
-  
-  .top-left {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-  }
-  
-  .bottom-right {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-  }
-  
-  .bottom-left {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-  } */
-
-
-  .container {
+.container {
     display: flex;
     gap: 0px; /* Adjust spacing between images */
   }
@@ -43,14 +13,6 @@
     position: fixed;
     top: 10px;
     left: 10px;
-  }
-
-  .center-div {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap; /* Prevent wrapping of the h2 text */
   }
   
   .middle-right {
@@ -75,6 +37,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-   
+    gap: 10px;
   }
   

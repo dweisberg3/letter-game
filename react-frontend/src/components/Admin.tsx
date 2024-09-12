@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Button, Dialog, DialogActions, DialogContent, DialogContentText,
-  DialogTitle, TextField, Paper
+  Button, Dialog, DialogActions, DialogContent,
+  DialogTitle, TextField, Paper, Typography, Box
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
@@ -28,19 +28,14 @@ interface Record {
   one_letter_game_with_miss: boolean;
   timestamp: string;
 }
-// record = {
-//   "id": el[0],
-//   "username": el[1],
-//   "points":el[2],
-//   "letter_level":el[3],
-//   "is_cumulative":bool(el[4]),
-//   "one_letter_game_with_miss":bool(el[5]),
-//   "timestamp":el[6]
 
-// }
 
 const AdminPage: React.FC = () => {
-    const [users, setUsers] = useState<User[]>([]);
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [users, setUsers] = useState<User[]>([]);
   const [userRecords,setUserRecords] = useState<Record[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
@@ -55,8 +50,7 @@ const AdminPage: React.FC = () => {
     
   });
 
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+  
 
   const handleSignOut = () => {
     logout(); // Clear the authentication state
@@ -155,19 +149,25 @@ const AdminPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Users</h2>
+    <div style={{padding:"20px"}}>
+      
+       <Typography align="center" variant="h6" gutterBottom fontSize={"26px"}>
+     Users
+    </Typography>
       
       {/* Table of users */}
-      <TableContainer component={Paper}>
-        <Table>
+      <Box sx={{ padding: '20px' }}>
+      <TableContainer   component={Paper}
+    >
+        <Table
+         >
           <TableHead>
             <TableRow>
               
-              <TableCell>First Name</TableCell>
-              <TableCell>Last Name</TableCell>
-              <TableCell>Grade</TableCell>
-              <TableCell>Username</TableCell>
+              <TableCell sx={{ borderBottom: '2px solid black' }}>First Name</TableCell>
+              <TableCell sx={{ borderBottom: '2px solid black' }}>Last Name</TableCell>
+              <TableCell sx={{ borderBottom: '2px solid black' }}>Grade</TableCell>
+              <TableCell sx={{ borderBottom: '2px solid black' }}>Username</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -190,9 +190,13 @@ const AdminPage: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
 
       {/* Add user button */}
-      <Button variant="contained" color="primary" onClick={handleOpenAddDialog}>
+      <Button variant="contained" 
+              color="primary" 
+              onClick={handleOpenAddDialog}
+              sx= {{ position:"fixed", bottom:"17%", right:"5%" }}>
         Add User
       </Button>
 
@@ -205,12 +209,12 @@ const AdminPage: React.FC = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell>Points</TableCell>
-                  <TableCell>Section Selected</TableCell>
-                  <TableCell>Num. of Letters</TableCell>
-                  <TableCell>Cumulative</TableCell>
-                  <TableCell>Made Mistake with Single Letter</TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell sx={{ borderBottom: '2px solid black' }}>Points</TableCell>
+                  <TableCell sx={{ borderBottom: '2px solid black' }}>Section Selected</TableCell>
+                  <TableCell sx={{ borderBottom: '2px solid black' }}>Num. of Letters</TableCell>
+                  <TableCell sx={{ borderBottom: '2px solid black' }}>Cumulative</TableCell>
+                  <TableCell sx={{ borderBottom: '2px solid black' }}>Made Mistake with Single Letter</TableCell>
+                  <TableCell sx={{ borderBottom: '2px solid black' }}>Date</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -285,7 +289,7 @@ const AdminPage: React.FC = () => {
           variant="contained" 
           color="secondary" 
           onClick={handleSignOut}
-          sx={{ mt: 2, margin:'10px' }}
+          sx= {{ position:"fixed", bottom:"10%", right:"5%" }}
         >
           Sign Out
         </Button>

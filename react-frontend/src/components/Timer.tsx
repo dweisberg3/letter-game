@@ -42,10 +42,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { formatTime } from '../utils/formatTime';
+import { Button } from '@mui/material';
 
 interface TimerProps {
   timeLeft: number;
-  setGametimeExpired: () => void;
+  setGametimeExpired: (endedEarly:boolean) => void;
 }
 
 const Timer: React.FC<TimerProps> = ({ timeLeft, setGametimeExpired }) => {
@@ -56,7 +57,7 @@ const Timer: React.FC<TimerProps> = ({ timeLeft, setGametimeExpired }) => {
       setGameTimeRemaining((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
-          setGametimeExpired();
+          setGametimeExpired(false);
           return 0;
         }
         return prevTime - 1;
@@ -68,7 +69,9 @@ const Timer: React.FC<TimerProps> = ({ timeLeft, setGametimeExpired }) => {
 
   return (
     <div>
-      <h2>{formatTime(gameTimeRemaining)}</h2>
+      <h2 style={{textAlign:"center"}}>{formatTime(gameTimeRemaining)}</h2>
+      <Button variant="contained" 
+                color="primary" onClick={() => setGametimeExpired(true)} >End Game</Button>
     </div>
   );
 };

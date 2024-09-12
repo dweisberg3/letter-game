@@ -54,7 +54,6 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
 
   const handleSectionClick = (index: number) => {
     setSelectedSectionIndex(index)
-    // handleIndexSelect(index)
   };
 
   const handleContinueClick = () => {
@@ -65,7 +64,6 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsCumulative(event.target.checked)
-    // handleIsCumulative(event.target.checked)
   };
 
   const getScoreboardData  = async () => {
@@ -94,14 +92,7 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
        >
          <img src={section['sectionPngPath']} style={{height:'200px', width:'650px'}} alt="Description of the image" />
        </div>
-        // <Section 
-        //   key={index} 
-        //   letters={section.letters.map((el) => el['pngfilePath'])} 
-        //   color={section.color} 
-        //   onClick={() => handleSectionClick(index)} 
-        //   selected={selectedSectionIndex === index || (isCumulative && index < selectedSectionIndex)} 
-          
-        // />
+  
       ))}
        <Button 
                variant="contained" 
@@ -112,7 +103,7 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
         Continue
       </Button>
         <div style= {{ position:"fixed", bottom:"20px", left:"10px", marginLeft:"50px" }} >
-        <Typography variant="body1">Cumulative</Typography>
+        <Typography variant="body1">Cumulative ?</Typography>
       <Switch
         // checked={isEnabled}
         // sx={{ position:"fixed", justifyContent:"center", alignContent:"center" , top:"40%"}}

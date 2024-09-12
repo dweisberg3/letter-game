@@ -44,7 +44,6 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
   const handleGoBack = () => {
     navigate('/board')
   }
-  console.log(allLetters)
   const getStyle = (isclicked: boolean) => {
     return {
       display: 'flex',
@@ -79,23 +78,24 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         body: JSON.stringify(data),
       });
       const result = await response.json();
-      console.log('Response from Flask:', result);
     } catch (error) {
       console.error('Error sending data:', error);
     }
   }
 
-  const setGameOver = () => {
-    console.log("game over time out!")
+  const setGameOver = (endedEarly:boolean) => {
     setIsActive(!isActive)
+    setPoints(0)
     // user would not get here if game was single letter and there was one miss 
-    sendData(false)
+    if(!endedEarly){
+      sendData(false)
+    }
   }
   const handleChange = (event: SelectChangeEvent<number>) => {
     setNumOfLetters(Number(event.target.value)); // Ensure the value is converted to number
     switch (Number(event.target.value)) {
       case 1:
-        setTimeLeft(45) // 45
+        setTimeLeft(7) // 45
         break;
       case 2:
         setTimeLeft(60)
@@ -144,7 +144,6 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
 
     setClickedIndex(index);
     setTimeout(() => setClickedIndex(null), 100); // Border visible for 100ms
-    console.log(`soundClipIndexArr : ${soundClipIndexArr} and currIndex : ${currIndex}`)
     if (letter === allLetters[soundClipIndexArr[currIndex]]['unicode']) {
       setPoints(points => points += 10)
       if (currIndex === soundClipIndexArr.length - 1) {
@@ -187,7 +186,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
       <div className="center-div">{isActive && (<Timer  timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
       <div style= {{ position:"fixed", top:"5%", left:"45%", padding:"10px"}}
           >{!isActive && (<>
-        <FormControl fullWidth variant="outlined" sx={{ minWidth: 70,marginBottom: 2 }}>
+        <FormControl fullWidth variant="outlined" sx={{ minWidth: 20,marginBottom: 1 }}>
           <InputLabel id="num-of-letters-label">Letters</InputLabel>
           <Select
             labelId="num-of-letters-label"
@@ -209,7 +208,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         <Button variant="contained" 
                 color="primary" 
                 onClick={startgame} 
-                sx={{ fontSize: '0.75rem', padding: '6px 12px', minWidth: '80px' }} 
+                sx={{justifyContent:"center", fontSize: '0.75rem', padding: '6px 6px', minWidth: '80px' }} 
                 disabled={numOfLetters === 0}> 
           Start
         </Button>
@@ -244,7 +243,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
       </div>
       {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}
       {isAnswerCorrect ===false && <h3 style={{ color: 'red' }}>Incorrect</h3>}
-  
+          {isActive && (
       <Typography component="span" 
                   color="primary" 
                   variant="body1"
@@ -252,7 +251,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
                   fontSize: '24px', 
                   fontWeight: 'bold' }}>
       Points: {points}
-    </Typography>
+    </Typography>)}
     
      
     </div>

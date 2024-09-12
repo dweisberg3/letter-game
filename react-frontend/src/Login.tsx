@@ -69,7 +69,7 @@ const Login: React.FC<LoginProps> = ({handleUserName}) => {
         sx={{ mt: 8 }}
       >
         <Typography variant="h3" gutterBottom>
-          Welcome to Letter Game
+          Letter Game
         </Typography>
         <Typography variant="h4" gutterBottom>
           Login

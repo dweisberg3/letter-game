@@ -69,7 +69,8 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
       try {
         const response = await fetch(`${host_api}/scoreboard`); // Replace with your API endpoint
         const data = await response.json();
-        const scoreboardData : ScoreTally[] = data.map((el:ScoreTally) => ({username:el.username,firstname:el.firstname,lastname:el.lastname,total_points:el.total_points}))
+        let scoreboardData : ScoreTally[] = data.map((el:ScoreTally) => ({username:el.username,firstname:el.firstname,lastname:el.lastname,total_points:el.total_points}))
+        scoreboardData.sort((a, b) => b.total_points - a.total_points);
         setScoreboardData(scoreboardData)
       } catch (error) {
         console.error('Error fetching users:', error);

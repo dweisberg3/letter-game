@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { sections ,host_api} from '../utils/Constants';
 import Timer from './Timer';
 import './Game.css'; // Import the CSS file
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 interface GameProps {
@@ -78,6 +78,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         body: JSON.stringify(data),
       });
       const result = await response.json();
+      console.log(result)
     } catch (error) {
       console.error('Error sending data:', error);
     }

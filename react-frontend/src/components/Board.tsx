@@ -44,7 +44,6 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
     const handleOpenDialog = () => {
       
       getScoreboardData();
-      console.log(scoreboardData)
       setOpen(true);
     };
 
@@ -58,7 +57,6 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
 
   const handleContinueClick = () => {
     handleGameParams(selectedSectionIndex,isCumulative)
-    console.log(isCumulative, '     ', selectedSectionIndex);
     navigate('/game'); // Navigate to the Game route
   };
 

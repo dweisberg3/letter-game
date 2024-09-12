@@ -34,7 +34,6 @@ const Login: React.FC<LoginProps> = ({handleUserName}) => {
       });
 
       const result : AuthResponse = await response.json();
-      console.log(result)
       if(response)
       if (result.authenticated){
         if(result.admin){

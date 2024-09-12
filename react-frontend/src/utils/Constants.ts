@@ -1,8 +1,8 @@
 const AUDIO_PATH = "../../public/letter_audio_files/";
 const PNG_PATH = "../../public/letter_image_files/"
 const PNG_VERSION = "_new";
-// const host_api = "https://dweisberg.pythonanywhere.com"
-export const host_api =   "http://127.0.0.1:5000"
+export const host_api = "https://dweisberg.pythonanywhere.com"
+// export const host_api =   "http://127.0.0.1:5000"
 interface Letter {
   unicode: string;
   audiofilePath: string;
@@ -126,17 +126,3 @@ export const sections = [
     sectionPngPath:PNG_PATH + "koof_section.png" 
   }
 ];
-
-
-
-// export class AlephBeis {
-//   alep
-// }
-
-// // for(const el in Object.keys.(alephBeis)){
-// //     console.log(el)
-
-// for(const el in alephBeis){
-//     console.log(alephBeis[el].unicode)
-// }
-

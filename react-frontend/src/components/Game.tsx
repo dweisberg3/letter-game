@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { sections ,host_api} from '../utils/Constants';
 import Timer from './Timer';
-import './Game.css'; // Import the CSS file
+import './Game.css';
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,12 +26,12 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
   const [points, setPoints] = useState<number>(0);
   const [playerLost, setPlayerLost] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(100); // 2 minutes
-  const [attempts, setAttempts] = useState(0)
+  const [timeLeft, setTimeLeft] = useState(0); // Gets set when user clicks on letter num challenge
+  const [attempts, setAttempts] = useState(0) 
   const [numOfLetters, setNumOfLetters] = useState<number>(0); // Strictly type as number
   const [soundClipIndexArr, setSoundClipIndexArr] = useState<number[]>([])
   const [currIndex, setCurrIndex] = useState<number>(0)
-  // let  allLetters = selectedSectionsIndex.flatMap(index => sections[index].letters);
+  const [showMessage, setShowMessage] = useState(false);
   let allLetters = sections[selectedSectionsIndex!].letters
   if (isCumulative) {
     let latest_idx = selectedSectionsIndex! - 1
@@ -96,7 +96,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     setNumOfLetters(Number(event.target.value)); // Ensure the value is converted to number
     switch (Number(event.target.value)) {
       case 1:
-        setTimeLeft(7) // 45
+        setTimeLeft(45) // 
         break;
       case 2:
         setTimeLeft(60)
@@ -132,6 +132,17 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     }
   }, [attempts]);
 
+  useEffect(() => {
+    if (isAnswerCorrect !== null) {
+      setShowMessage(true);
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+      }, 500); // Hide after 0.5 seconds
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [isAnswerCorrect,attempts]);
+
 
   const playAudio = (audio: HTMLAudioElement) => {
     return new Promise<void>((resolve) => {
@@ -148,6 +159,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     if (letter === allLetters[soundClipIndexArr[currIndex]]['unicode']) {
       setPoints(points => points += 10)
       if (currIndex === soundClipIndexArr.length - 1) {
+        setAttempts((attempts)=> attempts+1)
         setIsAnswerCorrect(true)
         setSoundClipIndexArr(Array.from({ length: Number(numOfLetters) }, () => Math.floor(Math.random() * allLetters.length)));
         setCurrIndex(0)
@@ -242,8 +254,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
           })}
         </div>))}
       </div>
-      {isAnswerCorrect && <h3 style={{ color: 'green' }}>Correct</h3>}
-      {isAnswerCorrect ===false && <h3 style={{ color: 'red' }}>Incorrect</h3>}
+      {showMessage && <h3 style={{ color: isAnswerCorrect ? 'green' : 'red' }}>{isAnswerCorrect ? 'Correct' : 'Incorrect'}</h3>}
           {isActive && (
       <Typography component="span" 
                   color="primary" 

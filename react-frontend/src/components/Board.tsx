@@ -110,7 +110,8 @@ const Board: React.FC<BoardProps> = ({handleGameParams,playerUsername}) => {
         color="primary"
       />
         </div>
-         
+        <Typography sx= {{ position:"fixed", bottom:"10px", right:"18%",  fontSize: '18px', 
+                  fontWeight: 'bold'}} variant="body1">Username : {playerUsername}</Typography>
        <Button 
           variant="contained" 
           color="secondary" 

@@ -168,6 +168,7 @@ const AdminPage: React.FC = () => {
               <TableCell sx={{ borderBottom: '2px solid black' }}>Last Name</TableCell>
               <TableCell sx={{ borderBottom: '2px solid black' }}>Grade</TableCell>
               <TableCell sx={{ borderBottom: '2px solid black' }}>Username</TableCell>
+              <TableCell sx={{ borderBottom: '2px solid black' }}>Password</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -177,6 +178,7 @@ const AdminPage: React.FC = () => {
                 <TableCell>{user.lastname}</TableCell>
                 <TableCell>{user.grade}</TableCell>
                 <TableCell>{user.username}</TableCell>
+                <TableCell>{user.password}</TableCell>
                 <TableCell>
                   <Button
                     variant="outlined"

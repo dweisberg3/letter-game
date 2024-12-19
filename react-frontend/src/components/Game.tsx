@@ -116,6 +116,11 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
     setAttempts(prev => prev + 1)
   }
 
+
+  const delay = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   useEffect(() => {
     if (isActive) {
       setTimeout(() => {
@@ -124,6 +129,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         const playAllAudio = async () => {
           for (const audio of audioArr) {
             await playAudio(audio);
+            await delay(500)
           }
         };
         playAllAudio();
@@ -197,7 +203,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
   return (
     <div className="game">
       <div className="center-div">{isActive && (<Timer  timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
-      <div style= {{ position:"fixed", top:"5%", left:"45%", padding:"10px"}}
+      <div style= {{ position:"fixed", top:"5%", left:"37%", padding:"10px"}}
           >{!isActive && (<>
         <FormControl fullWidth variant="outlined" sx={{ minWidth: 20,marginBottom: 1 }}>
           <InputLabel id="num-of-letters-label">Letters</InputLabel>
@@ -248,7 +254,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
                 style={combinedStyle}
                 onClick={() => isActive ? handleLetterClick(letter['unicode'], index) : null}
               >
-                <img src={letter['pngfilePath']} style={{ width: '85px', height: '100px' }}  />
+                <img src={letter['pngfilePath']} style={{ width: '100px', height: '150px' }}  />
               </div>
             )
           })}

@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, TextField, Paper, Typography, Box
+  DialogTitle, TextField, Paper, Typography, Box,
+  DialogContentText
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
@@ -39,6 +40,7 @@ const AdminPage: React.FC = () => {
   const [userRecords,setUserRecords] = useState<Record[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newUser, setNewUser] = useState<User>({
     id:users.length + 1,
@@ -141,6 +143,43 @@ const AdminPage: React.FC = () => {
     setOpenAddDialog(false);
   };
 
+  const handleOpenDeleteDialog = (user: User) => {
+    setOpenDeleteDialog(true);
+    setSelectedUser(user)
+  };
+
+  const handleCloseDeleteDialog = (confirmedToDelete:boolean) => {
+    if(confirmedToDelete){
+       removeUser()
+      console.log('delete!!')
+    }
+    else{
+      console.log('saved!')
+    }
+    setOpenDeleteDialog(false);
+
+  }
+
+  const removeUser  = async () => {
+    const data = {
+      username : selectedUser?.username
+    }
+    try {
+            const response = await fetch(`${host_api}/remove_user`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            });
+            const result = await response.json();
+            console.log(result)
+          } catch (error) {
+            console.error('Error sending data:', error);
+          }
+         await fetchUsers();
+  }
+
   const handleAddUser = () => {
     addUser()
     // setUsers([...users, { ...newUser, id: users.length + 1 }]);
@@ -185,6 +224,13 @@ const AdminPage: React.FC = () => {
                     onClick={() => handleOpenDetailDialog(user)}
                   >
                     Detail
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ marginLeft: '15px',background: 'red' , color: 'black', width: '30px'}}
+                    onClick={() => handleOpenDeleteDialog(user)}
+                  >
+                    Remove
                   </Button>
                 </TableCell>
               </TableRow>
@@ -283,6 +329,26 @@ const AdminPage: React.FC = () => {
           </Button>
           <Button onClick={handleAddUser} color="primary">
             Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+ 
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Remove {selectedUser?.username} ?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* Cancel Button */}
+          <Button onClick={() => handleCloseDeleteDialog(false)} color="primary">
+            Cancel
+          </Button>
+          {/* Yes/Delete Button */}
+          <Button onClick={() => handleCloseDeleteDialog(true)} color="error" variant="contained">
+            Yes
           </Button>
         </DialogActions>
       </Dialog>

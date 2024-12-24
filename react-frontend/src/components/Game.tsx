@@ -147,7 +147,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
 
       return () => clearTimeout(timer); // Cleanup the timer
     }
-  }, [isAnswerCorrect,attempts]);
+  }, [isAnswerCorrect,attempts,currIndex]);
 
 
   const playAudio = (audio: HTMLAudioElement) => {

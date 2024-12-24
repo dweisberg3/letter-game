@@ -129,7 +129,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
         const playAllAudio = async () => {
           for (const audio of audioArr) {
             await playAudio(audio);
-            await delay(500)
+            await delay(900)
           }
         };
         playAllAudio();
@@ -203,35 +203,47 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
   return (
     <div className="game">
       <div className="center-div">{isActive && (<Timer  timeLeft={timeLeft} setGametimeExpired={setGameOver} />)}</div>
-      <div style= {{ position:"fixed", top:"5%", left:"37%", padding:"10px"}}
-          >{!isActive && (<>
-        <FormControl fullWidth variant="outlined" sx={{ minWidth: 20,marginBottom: 1 }}>
-          <InputLabel id="num-of-letters-label">Letters</InputLabel>
-          <Select
-            labelId="num-of-letters-label"
-            id="num-of-letters"
-            value={numOfLetters}
-            onChange={handleChange}
-            label="Num of Letters"
-            sx={{ fontSize: '0.875rem', height: '40px' }}  
-          >
-            <MenuItem value={0}>
-              <em>Select a value</em>
-            </MenuItem>
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Button variant="contained" 
-                color="primary" 
-                onClick={startgame} 
-                sx={{justifyContent:"center", fontSize: '0.75rem', padding: '6px 6px', minWidth: '80px' }} 
-                disabled={numOfLetters === 0}> 
-          Start
-        </Button>
-                     </>)}
+      <div style= {{ position:"fixed", top:"5%", left:"39%"}}
+          >  {!isActive && (
+            <>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <FormControl fullWidth variant="outlined" sx={{ minWidth: 20, marginBottom: 1 }}>
+                  <InputLabel id="num-of-letters-label">Letters</InputLabel>
+                  <Select
+                    labelId="num-of-letters-label"
+                    id="num-of-letters"
+                    value={numOfLetters}
+                    onChange={handleChange}
+                    label="Num of Letters"
+                    sx={{ fontSize: '0.875rem', height: '40px' }}
+                  >
+                    <MenuItem value={0}>
+                      <em>Select a value</em>
+                    </MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
+                  </Select>
+                </FormControl>
+        
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={startgame}
+                  sx={{
+                    justifyContent: "center",
+                    fontSize: '0.75rem',
+                    padding: '6px 6px',
+                    minWidth: '80px',
+                    marginTop: '8px' // Adds some space between dropdown and button
+                  }}
+                  disabled={numOfLetters === 0}
+                >
+                  Start
+                </Button>
+              </div>
+            </>
+          )}
       </div>
       <Button 
           variant="contained" 
@@ -242,7 +254,8 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
           Back to Board</Button>
     
       <div>{selectedSections.map((section) => (
-        <div className={section.css_id} >
+        // <div className={selectedSections.length <= 2 ? ` ${getSectionStyle(index)}` : section.css_id }>
+        <div className={section.css_id.startsWith('middle-')? (section.css_id == 'middle-left container'? 'middle-left-game container' : 'middle-right-game container'): section.css_id}>
           {section.letters.map((letter, index) => {
             // const combinedStyle = { ...divStyles, backgroundColor: section.color };
             const isClicked = index === clickedIndex;
@@ -254,7 +267,7 @@ const Game: React.FC<GameProps> = ({ isCumulative, playerUsername, selectedSecti
                 style={combinedStyle}
                 onClick={() => isActive ? handleLetterClick(letter['unicode'], index) : null}
               >
-                <img src={letter['pngfilePath']} style={{ width: '100px', height: '150px' }}  />
+                <img src={letter['pngfilePath']} style={{ width: '110px', height: '163px' }}  />
               </div>
             )
           })}

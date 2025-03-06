@@ -12,6 +12,7 @@ const Section: React.FC<SectionProps> = ({ letters, color, onClick, selected }) 
   const divStyle = {
     backgroundColor: color,
     border: selected ? '4px solid black' : 'none'
+
   }
   return (
     <div 
@@ -21,8 +22,9 @@ const Section: React.FC<SectionProps> = ({ letters, color, onClick, selected }) 
       onClick={onClick}
     >
       {letters.map((letter, index) => (
-        <div key={index} className="card">
-          {letter}
+        <div key={index} >
+          
+          <img src={letter} style={{width:'100px', height: '100px'}}       alt="Description of the image" />
         </div>
       ))}
     </div>

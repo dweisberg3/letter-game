@@ -5,4 +5,5 @@ flask-backend/venv
 flask-backend/__pycache__
 flask-backend/bin
 react-frontend/node_modules
-*/dist
+.DS_store
+

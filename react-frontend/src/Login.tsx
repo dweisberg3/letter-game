@@ -1,42 +1,115 @@
-import React, { useState } from 'react';
+
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+import { host_api } from './utils/Constants';
 
-const Login = ({ onLogin }:any) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+
+interface LoginProps {
+  handleUserName:(username:string) => void;
+}
+
+interface AuthResponse {
+  authenticated:boolean;
+  admin:boolean;
+}
+
+const Login: React.FC<LoginProps> = ({handleUserName}) => {
+  const [formValues, setFormValues] = useState({ username: '', password: '' });
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    onLogin(username, password);
-    if (username === 'admin' && password === 'admin') {
-      navigate('/admin');
-    } else {
-      navigate('/letter-game');
+    const formData = new FormData();
+    formData.append('username', formValues.username);
+    formData.append('password', formValues.password);
+    handleUserName(formValues.username)
+    try {
+      const response = await fetch(`${host_api}/login`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result : AuthResponse = await response.json();
+      if(response)
+      if (result.authenticated){
+        if(result.admin){
+          login("Admin");
+          navigate('/admin');
+        }
+        else{
+          login("me")
+          navigate('/board')
+        }
+      } else {
+        setError(true);
+      }
+    } catch (error) {
+      console.error('Error sending data:', error);
+      setError(true);
     }
   };
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Username:</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-   
+    <Container maxWidth="sm">
+       <Box 
+        display="flex" 
+        flexDirection="column" 
+        alignItems="center" 
+        justifyContent="center"
+        sx={{ mt: 8 }}
+      >
+        <Typography variant="h3" gutterBottom>
+          Letter Game
+        </Typography>
+        <Typography variant="h4" gutterBottom>
+          Login
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Username"
+            name="username"
+            value={formValues.username}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            value={formValues.password}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+          />
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Login
+          </Button>
+          {error && (
+          <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+            Authorization failed. Please check your username and password.
+          </Typography>
+        )}
+        </form>
+      </Box>
+    </Container>
   );
 };
 

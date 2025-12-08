@@ -1,0 +1,39 @@
+<div class="board">
+  <div *ngFor="let section of sections; let i = index"
+       [ngClass]="section.css_id"
+       [style.border]="isSectionSelected(i) ? '3px solid black' : 'none'"
+       (click)="handleSectionClick(i)">
+    <img [src]="section.sectionPngPath" style="height: 200px; width: 650px;" alt="Section image">
+  </div>
+
+  <button mat-raised-button
+          color="primary"
+          (click)="handleContinue()"
+          [disabled]="selectedSectionIndex < 0"
+          style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    Continue
+  </button>
+
+  <div style="position: fixed; bottom: 20px; left: 60px;">
+    <p>Cumulative?</p>
+    <mat-slide-toggle [(ngModel)]="isCumulative" color="primary"></mat-slide-toggle>
+  </div>
+
+  <p style="position: fixed; bottom: 55px; right: 6%; font-size: 18px; font-weight: bold;">
+    Username: {{playerUsername}}
+  </p>
+
+  <button mat-raised-button
+          color="warn"
+          (click)="handleSignOut()"
+          style="position: fixed; bottom: 10px; right: 10px;">
+    Sign Out
+  </button>
+
+  <button mat-raised-button
+          color="primary"
+          (click)="openScoreboard()"
+          style="position: fixed; bottom: 10px; right: 150px;">
+    Scoreboard
+  </button>
+</div>

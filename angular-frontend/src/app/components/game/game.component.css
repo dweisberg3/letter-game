@@ -1,0 +1,63 @@
+.container {
+  display: flex;
+  gap: 0px;
+}
+
+.top-right {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+
+.top-left {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+
+.center-div {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.middle-right {
+  position: fixed;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.middle-left {
+  position: fixed;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.bottom-center {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.middle-right-game {
+  position: fixed;
+  top: 65%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.middle-left-game {
+  position: fixed;
+  top: 35%;
+  margin-top: 35px;
+  left: 10px;
+  transform: translateY(-50%);
+}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx @angular/cli@19 new angular-frontend --directory angular-frontend --routing --style css --skip-git)",
+      "Bash(ng add:*)",
+      "Bash(ng generate:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

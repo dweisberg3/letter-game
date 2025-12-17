@@ -1,14 +1,14 @@
 <div class="game">
-  <div class="center-div" *ngIf="isActive">
-    <app-timer [timeLeft]="timeLeft" (gametimeExpired)="setGameOver($event)"></app-timer>
-  </div>
+  <div class="center-div">
+    <div *ngIf="isActive">
+      <app-timer [timeLeft]="timeLeft" (gametimeExpired)="setGameOver($event)"></app-timer>
+    </div>
 
-  <div style="position: fixed; top: 5%; left: 39%;">
-    <div *ngIf="!isActive" style="display: flex; flex-direction: column; align-items: center;">
-      <mat-form-field appearance="outline" style="min-width: 20px; margin-bottom: 8px;">
-        <mat-label>Letters</mat-label>
+    <div *ngIf="!isActive" style="display: flex; flex-direction: column; align-items: center; background-color: #d0d0d0; padding: 20px; border-radius: 8px;">
+      <mat-form-field appearance="outline" style="width: 80px; margin-bottom: 8px;">
+        <!-- <mat-label>Letters</mat-label> -->
         <mat-select [(ngModel)]="numOfLetters" (selectionChange)="handleChange($event.value)">
-          <mat-option [value]="0">Select a value</mat-option>
+          <!-- <mat-option [value]="0">Select a value</mat-option> -->
           <mat-option [value]="1">1</mat-option>
           <mat-option [value]="2">2</mat-option>
           <mat-option [value]="3">3</mat-option>
@@ -25,31 +25,47 @@
     </div>
   </div>
 
-  <button mat-raised-button
+  <button *ngIf="!isActive" mat-raised-button
           color="accent"
           (click)="handleGoBack()"
           style="position: fixed; bottom: 20px; left: 70px;">
     Back to Board
   </button>
 
+  <button mat-raised-button
+          (click)="toggleFullscreen()"
+          style="position: fixed; bottom: 20px; left: 220px;">
+    {{ isFullscreen ? 'Exit Fullscreen' : 'Fullscreen' }}
+  </button>
+
   <div *ngFor="let section of selectedSections">
     <div [ngClass]="getSectionCssClass(section)">
       <div *ngFor="let letter of section.letters; let i = index"
-           [ngStyle]="getStyle(i === clickedIndex)"
-           (click)="handleLetterClick(letter.unicode, i)">
+           class="letter-tile"
+        
+           (click)="handleLetterClick(letter.unicode, i)"
+            [style.pointer-events]="userCanClickLetters ? 'auto' : 'none'">          
         <img [src]="letter.pngfilePath" style="width: 110px; height: 163px;">
       </div>
     </div>
   </div>
 
-  <h3 *ngIf="showMessage"
-      [style.color]="isAnswerCorrect ? 'green' : 'red'"
-      style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-    {{ isAnswerCorrect ? 'Correct' : 'Incorrect' }}
-  </h3>
+  <div *ngFor="let msg of pointMessages; let i = index"
+       class="point-message"
+       [style.color]="msg.isPositive ? 'green' : 'red'"
+       [style.bottom]="'calc(5% + ' + (i * 15) + 'px)'"
+       [style.right]="'calc(8% + 150px)'"
+       [style.animation-delay]="i * 0.05 + 's'">
+    {{ msg.isPositive ? '+' : '' }}{{ msg.points }}
+  </div>
 
   <p *ngIf="isActive"
-     style="position: fixed; bottom: 5%; right: 8%; color: black; font-size: 24px; font-weight: bold;">
+     style="position: fixed; bottom: 5%; right: 8%; color: #d0d0d0; font-size: 24px; font-weight: bold;">
     Points: {{ points }}
+  </p>
+
+  <p *ngIf="isActive"
+     style="position: fixed; bottom: 5%; left: 8%; color: #d0d0d0; font-size: 18px; font-weight: bold;">
+    Username: {{ playerUsername }}
   </p>
 </div>

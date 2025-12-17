@@ -1,3 +1,8 @@
+.game {
+  background-color: black;
+  min-height: 100vh;
+}
+
 .container {
   display: flex;
   gap: 0px;
@@ -60,4 +65,40 @@
   margin-top: 35px;
   left: 10px;
   transform: translateY(-50%);
+}
+
+.not-active {
+  opacity: 0.5;
+}
+
+.letter-tile {
+  transition: all 0.1s ease;
+  border: 1px solid black;
+  display: inline-block;
+  line-height: 0;
+}
+
+.letter-tile:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.point-message {
+  position: fixed;
+  right: 8%;
+  font-size: 48px;
+  font-weight: bold;
+  animation: fadeOut 1.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }

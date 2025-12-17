@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { sections, Letter } from '../../utils/constants';
 import { ApiService } from '../../core/services/api.service';
 import { TimerComponent } from '../timer/timer.component';
+import { GameOverDialogComponent } from './game-over-dialog.component';
 
 @Component({
   selector: 'app-game',
@@ -18,12 +20,13 @@ import { TimerComponent } from '../timer/timer.component';
     MatButtonModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatDialogModule,
     TimerComponent
   ],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   sections = sections;
   selectedSections: any[] = [];
   isCumulative = false;
@@ -32,20 +35,24 @@ export class GameComponent implements OnInit {
 
   isAnswerCorrect: boolean | null = null;
   isActive = false;
+  userCanClickLetters = false; // true only while game has been started and audio isn't playing 
   clickedIndex: number | null = null;
   points = 0;
   playerLost = false;
   timeLeft = 0;
-  attempts = 0;
   numOfLetters = 0;
   soundClipIndexArr: number[] = [];
   currIndex = 0;
   showMessage = false;
   allLetters: Letter[] = [];
+  currentAudio: HTMLAudioElement | null = null;
+  pointMessages: Array<{points: number, isPositive: boolean}> = [];
+  isFullscreen = false;
 
   constructor(
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
@@ -72,22 +79,34 @@ export class GameComponent implements OnInit {
         latestIdx--;
       }
     }
+
+    // Listen for fullscreen changes (e.g., when user presses ESC)
+    document.addEventListener('fullscreenchange', this.onFullscreenChange.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('fullscreenchange', this.onFullscreenChange.bind(this));
+  }
+
+  onFullscreenChange(): void {
+    this.isFullscreen = !!document.fullscreenElement;
   }
 
   handleGoBack(): void {
     this.router.navigate(['/board']);
   }
 
-  getStyle(isClicked: boolean): any {
-    return {
-      display: 'flex',
-      justifyContent: 'center',
-      cursor: this.isActive ? 'pointer' : 'default',
-      alignItems: 'center',
-      backgroundColor: this.isActive ? 'white' : 'lightgrey',
-      borderRadius: '5px',
-      border: isClicked ? '4px solid darkgrey' : '1px solid black'
-    };
+  toggleFullscreen(): void {
+    if (!this.isFullscreen) {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      }
+    } else {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    }
   }
 
   sendData(lostSingleLetterGame: boolean): void {
@@ -111,7 +130,18 @@ export class GameComponent implements OnInit {
   }
 
   setGameOver(endedEarly: boolean): void {
+    this.stopAudio();
+    this.userCanClickLetters = false;
     this.isActive = false;
+
+    // Show game over dialog
+    const finalScore = this.points;
+    this.dialog.open(GameOverDialogComponent, {
+      width: '400px',
+      data: { points: finalScore },
+      disableClose: true
+    });
+
     this.points = 0;
     if (!endedEarly) {
       this.sendData(false);
@@ -133,89 +163,152 @@ export class GameComponent implements OnInit {
       default:
         break;
     }
-    this.soundClipIndexArr = Array.from(
-      { length: value },
-      () => Math.floor(Math.random() * this.allLetters.length)
-    );
   }
 
+  async anounceSetofLetters() {
+
+    this.userCanClickLetters = false;
+    await this.playAllAudio(this.buildAudioArr())
+    this.userCanClickLetters = true;
+  }
+  buildAudioArr() {
+    this.soundClipIndexArr = Array.from(
+          { length: this.numOfLetters },
+      () => Math.floor(Math.random() * this.allLetters.length)
+    );
+
+    const audioArr = this.soundClipIndexArr.map(
+      index => new Audio(this.allLetters[index].audiofilePath)
+    );
+
+    return audioArr;
+
+  }
   startGame(): void {
     this.points = 0;
     this.isActive = true;
-    this.attempts++;
-
-    setTimeout(() => {
-      this.isAnswerCorrect = null;
-      const audioArr = this.soundClipIndexArr.map(
-        index => new Audio(this.allLetters[index].audiofilePath)
-      );
-      this.playAllAudio(audioArr);
-    }, 500);
+    this.anounceSetofLetters() 
   }
 
   async playAllAudio(audioArr: HTMLAudioElement[]): Promise<void> {
     for (const audio of audioArr) {
       await this.playAudio(audio);
-      await this.delay(900);
+      await this.delay(100);
     }
+    // this.userCanClickLetters = true;
   }
 
   playAudio(audio: HTMLAudioElement): Promise<void> {
     return new Promise<void>((resolve) => {
+      this.currentAudio = audio;
       audio.play();
-      audio.onended = () => resolve();
+      audio.onended = () => {
+        this.currentAudio = null;
+        resolve();
+      };
     });
+  }
+
+  stopAudio(): void {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
+    }
   }
 
   delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  handleLetterClick(letter: string, index: number): void {
-    if (!this.isActive) return;
+  
+  getPointsForCorrect(): number {
+    if (!this.isCumulative) {
+      // Non-cumulative: always use yellow values
+      const pointsMap = [5, 10, 15];
+      return pointsMap[this.numOfLetters - 1] || 0;
+    }
+
+    // Cumulative: points based on section
+    const pointsMap = [
+      [5, 10, 15],    // YELLOW (index 0)
+      [10, 15, 20],   // ORANGE (index 1)
+      [15, 20, 25],   // RED (index 2)
+      [20, 25, 30],   // BLUE (index 3)
+      [25, 30, 35]    // PURPLE (index 4)
+    ];
+
+    return pointsMap[this.selectedSectionsIndex]?.[this.numOfLetters - 1] || 0;
+  }
+
+  getPointsForError(): number {
+    if (!this.isCumulative) {
+      // Non-cumulative: always use yellow values
+      const pointsMap = [15, 10, 10];
+      return pointsMap[this.numOfLetters - 1] || 0;
+    }
+
+    // Cumulative: points based on section
+    const pointsMap = [
+      [15, 10, 10],   // YELLOW (index 0)
+      [15, 10, 5],    // ORANGE (index 1)
+      [10, 5, 5],     // RED (index 2)
+      [10, 5, 5],     // BLUE (index 3)
+      [10, 5, 5]      // PURPLE (index 4)
+    ];
+
+    return pointsMap[this.selectedSectionsIndex]?.[this.numOfLetters - 1] || 0;
+  }
+
+  showPointChange(points: number, isPositive: boolean): void {
+    this.pointMessages.push({ points, isPositive });
+
+    setTimeout(() => {
+      this.pointMessages.shift();
+    }, 1500);
+  }
+
+  handleLetterClick(letter: string, index: number){
+    if(!this.userCanClickLetters) return;
 
     this.clickedIndex = index;
-    setTimeout(() => (this.clickedIndex = null), 100);
 
     if (letter === this.allLetters[this.soundClipIndexArr[this.currIndex]].unicode) {
-      this.points += 10;
+      const pointsEarned = this.getPointsForCorrect();
+      this.points += pointsEarned;
+      this.showPointChange(pointsEarned, true);
 
       if (this.currIndex === this.soundClipIndexArr.length - 1) {
+        this.userCanClickLetters = false;
         this.isAnswerCorrect = true;
-        this.showMessageBriefly();
-        this.soundClipIndexArr = Array.from(
-          { length: this.numOfLetters },
-          () => Math.floor(Math.random() * this.allLetters.length)
-        );
         this.currIndex = 0;
-        this.attempts++;
-        setTimeout(() => this.playAllAudio(
-          this.soundClipIndexArr.map(idx => new Audio(this.allLetters[idx].audiofilePath))
-        ), 500);
+        this.anounceSetofLetters();
       } else {
         this.isAnswerCorrect = true;
-        this.showMessageBriefly();
         this.currIndex++;
       }
     } else {
       this.isAnswerCorrect = false;
-      this.showMessageBriefly();
 
       if (this.numOfLetters === 1) {
+        const finalScore = this.points;
+        this.stopAudio();
         this.isActive = false;
+        this.userCanClickLetters = false;
         this.playerLost = true;
+        this.points = 0;
         this.sendData(true);
+
+        // Show game over dialog
+        this.dialog.open(GameOverDialogComponent, {
+          width: '400px',
+          data: { points: finalScore },
+          disableClose: true
+        });
       } else {
         if (this.currIndex === this.soundClipIndexArr.length - 1) {
-          this.soundClipIndexArr = Array.from(
-            { length: this.numOfLetters },
-            () => Math.floor(Math.random() * this.allLetters.length)
-          );
+          this.anounceSetofLetters();
           this.currIndex = 0;
-          this.attempts++;
-          setTimeout(() => this.playAllAudio(
-            this.soundClipIndexArr.map(idx => new Audio(this.allLetters[idx].audiofilePath))
-          ), 500);
         } else {
           this.currIndex++;
         }
@@ -223,7 +316,7 @@ export class GameComponent implements OnInit {
     }
   }
 
-  showMessageBriefly(): void {
+  async showMessageBriefly(): Promise<void> {
     this.showMessage = true;
     setTimeout(() => {
       this.showMessage = false;

@@ -30,7 +30,7 @@ export const alephBeis: AlephBeisDefinition = {
   daled: { unicode: '\u05D3', audiofilePath: AUDIO_PATH + "daled.mp3", pngfilePath: PNG_PATH + "daled" + PNG_VERSION + ".png" },
   hey: { unicode: '\u05D4', audiofilePath: AUDIO_PATH + "hey.mp3", pngfilePath: PNG_PATH + "hey" + PNG_VERSION + ".png" },
   vav: { unicode: '\u05D5', audiofilePath: AUDIO_PATH + "vav.mp3", pngfilePath: PNG_PATH + "vav" + PNG_VERSION + ".png" },
-  zayin: { unicode: '\u05D6', audiofilePath: AUDIO_PATH + "zain.mp3", pngfilePath: PNG_PATH + "zayin" + PNG_VERSION + ".png" },
+  zayin: { unicode: '\u05D6', audiofilePath: AUDIO_PATH + "zayin.mp3", pngfilePath: PNG_PATH + "zayin" + PNG_VERSION + ".png" },
   ches: { unicode: '\u05D7', audiofilePath: AUDIO_PATH + "ches.mp3", pngfilePath: PNG_PATH + "ches" + PNG_VERSION + ".png" },
   tes: { unicode: '\u05D8', audiofilePath: AUDIO_PATH + "tes.mp3", pngfilePath: PNG_PATH + "tes" + PNG_VERSION + ".png" },
   yud: { unicode: '\u05D9', audiofilePath: AUDIO_PATH + "yud.mp3", pngfilePath: PNG_PATH + "yud" + PNG_VERSION + ".png" },

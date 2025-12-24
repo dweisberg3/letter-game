@@ -42,9 +42,9 @@
     <div [ngClass]="getSectionCssClass(section)">
       <div *ngFor="let letter of section.letters; let i = index"
            class="letter-tile"
-        
-           (click)="handleLetterClick(letter.unicode, i)"
-            [style.pointer-events]="userCanClickLetters ? 'auto' : 'none'">          
+
+           (click)="handleLetterClick(letter.id, i)"
+            [style.pointer-events]="userCanClickLetters ? 'auto' : 'none'">
         <img [src]="letter.pngfilePath" style="width: 110px; height: 163px;">
       </div>
     </div>

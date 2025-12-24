@@ -32,6 +32,7 @@ export class GameComponent implements OnInit, OnDestroy {
   isCumulative = false;
   selectedSectionsIndex = 0;
   playerUsername = '';
+  isNekodos = false;
 
   isAnswerCorrect: boolean | null = null;
   isActive = false;
@@ -59,24 +60,31 @@ export class GameComponent implements OnInit, OnDestroy {
       this.selectedSectionsIndex = navigation.extras.state['selectedSectionsIndex'] || 0;
       this.isCumulative = navigation.extras.state['isCumulative'] || false;
       this.playerUsername = navigation.extras.state['playerUsername'] || '';
+      this.isNekodos = navigation.extras.state['isNekodos'] || false;
     }
   }
 
   ngOnInit(): void {
-    this.selectedSections = this.sections.filter((_, index) => {
-      if (this.isCumulative) {
-        return index <= this.selectedSectionsIndex;
-      } else {
-        return index === this.selectedSectionsIndex;
-      }
-    });
+    if (this.isNekodos) {
+      // Only use the nekodos section (last element)
+      this.selectedSections = [this.sections[this.sections.length - 1]];
+      this.allLetters = [...this.sections[this.sections.length - 1].letters];
+    } else {
+      this.selectedSections = this.sections.filter((_, index) => {
+        if (this.isCumulative) {
+          return index <= this.selectedSectionsIndex;
+        } else {
+          return index === this.selectedSectionsIndex;
+        }
+      });
 
-    this.allLetters = [...this.sections[this.selectedSectionsIndex].letters];
-    if (this.isCumulative) {
-      let latestIdx = this.selectedSectionsIndex - 1;
-      while (latestIdx > -1) {
-        this.allLetters = [...this.allLetters, ...this.sections[latestIdx].letters];
-        latestIdx--;
+      this.allLetters = [...this.sections[this.selectedSectionsIndex].letters];
+      if (this.isCumulative) {
+        let latestIdx = this.selectedSectionsIndex - 1;
+        while (latestIdx > -1) {
+          this.allLetters = [...this.allLetters, ...this.sections[latestIdx].letters];
+          latestIdx--;
+        }
       }
     }
 
@@ -168,7 +176,8 @@ export class GameComponent implements OnInit, OnDestroy {
   async anounceSetofLetters() {
 
     this.userCanClickLetters = false;
-    await this.playAllAudio(this.buildAudioArr())
+    const audioArray = this.buildAudioArr()
+    await this.playAllAudio(audioArray)
     this.userCanClickLetters = true;
   }
   buildAudioArr() {
@@ -180,7 +189,7 @@ export class GameComponent implements OnInit, OnDestroy {
     const audioArr = this.soundClipIndexArr.map(
       index => new Audio(this.allLetters[index].audiofilePath)
     );
-
+    console.log(audioArr)
     return audioArr;
 
   }
@@ -201,11 +210,26 @@ export class GameComponent implements OnInit, OnDestroy {
   playAudio(audio: HTMLAudioElement): Promise<void> {
     return new Promise<void>((resolve) => {
       this.currentAudio = audio;
-      audio.play();
-      audio.onended = () => {
+
+      const onEnded = () => {
         this.currentAudio = null;
         resolve();
       };
+
+      const onError = (error: any) => {
+        console.error('Error with audio:', error);
+        this.currentAudio = null;
+        resolve();
+      };
+
+      audio.addEventListener('ended', onEnded, { once: true });
+      audio.addEventListener('error', onError, { once: true });
+
+      // Ensure audio is loaded before playing
+      audio.load();
+      audio.addEventListener('loadeddata', () => {
+        audio.play().catch(onError);
+      }, { once: true });
     });
   }
 
@@ -268,12 +292,12 @@ export class GameComponent implements OnInit, OnDestroy {
     }, 1500);
   }
 
-  handleLetterClick(letter: string, index: number){
+  handleLetterClick(letterId: string, index: number){
     if(!this.userCanClickLetters) return;
 
     this.clickedIndex = index;
 
-    if (letter === this.allLetters[this.soundClipIndexArr[this.currIndex]].unicode) {
+    if (letterId === this.allLetters[this.soundClipIndexArr[this.currIndex]].id) {
       const pointsEarned = this.getPointsForCorrect();
       this.points += pointsEarned;
       this.showPointChange(pointsEarned, true);

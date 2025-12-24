@@ -31,6 +31,7 @@ export class BoardComponent implements OnInit {
   isCumulative = false;
   selectedSectionIndex = -1;
   playerUsername = '';
+  isNekodos = false;
 
   constructor(
     private authService: AuthService,
@@ -47,14 +48,23 @@ export class BoardComponent implements OnInit {
 
   handleSectionClick(index: number): void {
     this.selectedSectionIndex = index;
+    this.isNekodos = false;
+  }
+
+  toggleNekodos(): void {
+    this.isNekodos = !this.isNekodos;
+    if (this.isNekodos) {
+      this.selectedSectionIndex = this.sections.length - 1; // Last element (nekodos)
+    }
   }
 
   handleContinue(): void {
     this.router.navigate(['/game'], {
       state: {
         selectedSectionsIndex: this.selectedSectionIndex,
-        isCumulative: this.isCumulative,
-        playerUsername: this.playerUsername
+        isCumulative: this.isNekodos ? false : this.isCumulative,
+        playerUsername: this.playerUsername,
+        isNekodos: this.isNekodos
       }
     });
   }

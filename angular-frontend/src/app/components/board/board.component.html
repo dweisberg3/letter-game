@@ -1,10 +1,12 @@
 <div class="board">
-  <div *ngFor="let section of sections; let i = index"
-       [ngClass]="section.css_id"
-       [style.border]="isSectionSelected(i) ? '3px solid black' : 'none'"
-       (click)="handleSectionClick(i)">
-    <img [src]="section.sectionPngPath" style="height: 200px; width: 650px;" alt="Section image">
-  </div>
+  <ng-container *ngFor="let section of sections; let i = index; let last = last">
+    <div *ngIf="!last"
+        [ngClass]="section.css_id"
+        [style.border]="isSectionSelected(i) ? '3px solid black' : 'none'"
+        (click)="handleSectionClick(i)">
+      <img [src]="section.sectionPngPath" style="height: 200px; width: 650px;" alt="Section image">
+    </div>
+  </ng-container>
 
   <button mat-raised-button
           color="primary"
@@ -14,9 +16,18 @@
     Continue
   </button>
 
+  <div style="position: fixed; bottom: 100px; left: 60px;">
+    <button mat-raised-button
+            (click)="toggleNekodos()"
+            [style.border]="isNekodos ? '3px solid black' : 'none'"
+            style="background-color: white; padding: 20px; margin: 20px; border-radius: 8px; box-shadow: 0 0 0 20px #4CAF50;">
+      Nekodos
+    </button>
+  </div>
+
   <div style="position: fixed; bottom: 20px; left: 60px;">
-    <p style="color: #d0d0d0;">Cumulative?</p>
-    <mat-slide-toggle [(ngModel)]="isCumulative" color="primary"></mat-slide-toggle>
+    <p style="color: #141313;">Cumulative?</p>
+    <mat-slide-toggle [(ngModel)]="isCumulative" [disabled]="isNekodos" color="primary"></mat-slide-toggle>
   </div>
 
   <p style="position: fixed; bottom: 55px; right: 6%; font-size: 18px; font-weight: bold; color: #d0d0d0;">

@@ -1,7 +1,20 @@
 <div class="game">
   <div class="center-div">
-    <div *ngIf="isActive">
+    <div *ngIf="isActive" style="display: flex; flex-direction: column; align-items: center;">
       <app-timer [timeLeft]="timeLeft" (gametimeExpired)="setGameOver($event)"></app-timer>
+      <p style="color: #d0d0d0; font-size: 16px; font-weight: bold; margin-top: 10px;">
+        Number of Letters: {{ numOfLetters }}
+      </p>
+
+      <div style="position: relative; height: 40px; margin-top: 10px;">
+        <div *ngFor="let msg of pointMessages; let i = index"
+             class="point-message-center"
+             [style.color]="msg.isPositive ? 'green' : 'red'"
+             [style.top]="(i * 5) + 'px'"
+             [style.animation-delay]="i * 0.05 + 's'">
+          {{ msg.text }}
+        </div>
+      </div>
     </div>
 
     <div *ngIf="!isActive" style="display: flex; flex-direction: column; align-items: center; background-color: #d0d0d0; padding: 20px; border-radius: 8px;">
@@ -48,15 +61,6 @@
         <img [src]="letter.pngfilePath" style="width: 110px; height: 163px;">
       </div>
     </div>
-  </div>
-
-  <div *ngFor="let msg of pointMessages; let i = index"
-       class="point-message"
-       [style.color]="msg.isPositive ? 'green' : 'red'"
-       [style.bottom]="'calc(5% + ' + (i * 15) + 'px)'"
-       [style.right]="'calc(8% + 150px)'"
-       [style.animation-delay]="i * 0.05 + 's'">
-    {{ msg.isPositive ? '+' : '' }}{{ msg.points }}
   </div>
 
   <p *ngIf="isActive"

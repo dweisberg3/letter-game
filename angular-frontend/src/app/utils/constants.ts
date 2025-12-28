@@ -166,15 +166,17 @@ export const sections: Section[] = [
   },
   {
     letters: [
-      alephBeis['kamatz'],
-      alephBeis['patach'],
-      alephBeis['chirik'],
-      alephBeis['tserey'],
-      alephBeis['cholam'],
+      alephBeis['shva'],
       alephBeis['kubutz'],
-      alephBeis['shva']
+      alephBeis['cholam'],
+      alephBeis['segol'],
+      alephBeis['tserey'],
+      alephBeis['chirik'],
+      alephBeis['patach'],
+      alephBeis['kamatz'],
+      
     ],
-    css_id: "bottom-center container",
+    css_id: "middle-right container",
     sectionPngPath: PNG_PATH + "nekodos_section.png"
   }
 

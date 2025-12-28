@@ -11,6 +11,7 @@ import { ApiService } from '../../core/services/api.service';
 import { sections } from '../../utils/constants';
 import { ScoreTally } from '../../models/user.model';
 import { ScoreboardDialogComponent } from './scoreboard-dialog.component';
+import { RulesDialogComponent } from './rules-dialog.component';
 
 @Component({
   selector: 'app-board',
@@ -86,6 +87,12 @@ export class BoardComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching scoreboard:', error);
       }
+    });
+  }
+
+  openRules(): void {
+    this.dialog.open(RulesDialogComponent, {
+      width: '750px'
     });
   }
 

@@ -8,6 +8,17 @@
   gap: 0px;
 }
 
+.nekodos-container {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  /* gap: 20px; */
+  justify-content: center;
+  align-items: center;
+}
+
 .top-right {
   position: fixed;
   top: 10px;
@@ -82,6 +93,36 @@
   transform: scale(0.95);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.nekodos-tile {
+  transition: all 0.1s ease;
+  border: 1px solid black;
+  display: inline-block;
+  line-height: 0;
+  margin-right: 2px;
+}
+
+.nekodos-tile:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Block 1: Shva (index 0) - standalone, gap after */
+.nekodos-tile:nth-child(1) {
+  margin-right: 40px;
+}
+
+/* Block 2: Kubutz (index 1), Cholam (index 2) - gap after cholam */
+.nekodos-tile:nth-child(3) {
+  margin-right: 40px;
+}
+
+/* Block 3: Segol (index 3), Tserey (index 4), Chirik (index 5) - gap after chirik */
+.nekodos-tile:nth-child(6) {
+  margin-right: 40px;
+}
+
+/* Block 4: Patach (index 6), Kamatz (index 7) - no gap needed after */
 
 .point-message-center {
   position: absolute;

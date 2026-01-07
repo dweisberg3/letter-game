@@ -3,7 +3,7 @@
     <div *ngIf="isActive" style="display: flex; flex-direction: column; align-items: center;">
       <app-timer [timeLeft]="timeLeft" (gametimeExpired)="setGameOver($event)"></app-timer>
       <p style="color: #d0d0d0; font-size: 16px; font-weight: bold; margin-top: 10px;">
-        Number of Letters: {{ numOfLetters }}
+        Level {{ numOfLetters }}
       </p>
 
       <div style="position: relative; height: 40px; margin-top: 10px;">
@@ -18,13 +18,13 @@
     </div>
 
     <div *ngIf="!isActive" style="display: flex; flex-direction: column; align-items: center; background-color: #d0d0d0; padding: 20px; border-radius: 8px;">
-      <mat-form-field appearance="outline" style="width: 80px; margin-bottom: 8px;">
-        <!-- <mat-label>Letters</mat-label> -->
+      <mat-form-field appearance="outline" style="width: 100px; margin-bottom: 8px;">
+        <!-- <mat-label>Choose a Level</mat-label> -->
         <mat-select [(ngModel)]="numOfLetters" (selectionChange)="handleChange($event.value)">
-          <!-- <mat-option [value]="0">Select a value</mat-option> -->
-          <mat-option [value]="1">1</mat-option>
-          <mat-option [value]="2">2</mat-option>
-          <mat-option [value]="3">3</mat-option>
+          <!-- <mat-option [value]="0">Select Level</mat-option> -->
+          <mat-option [value]="1">Level 1</mat-option>
+          <mat-option [value]="2">Level 2</mat-option>
+          <mat-option [value]="3">Level 3</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -54,11 +54,14 @@
   <div *ngFor="let section of selectedSections">
     <div [ngClass]="getSectionCssClass(section)">
       <div *ngFor="let letter of section.letters; let i = index"
-           class="letter-tile"
+           [ngClass]="isNekodos ? 'nekodos-tile' : 'letter-tile'"
 
            (click)="handleLetterClick(letter.id, i)"
             [style.pointer-events]="userCanClickLetters ? 'auto' : 'none'">
-        <img [src]="letter.pngfilePath" style="width: 110px; height: 163px;">
+        <img [src]="letter.pngfilePath"
+             [style.width]="isNekodos ? (letter.id === 'cholam' || letter.id === 'kubutz' ? '130px' : '100px') : '110px'"
+             [style.height]="isNekodos ? (letter.id === 'cholam' || letter.id === 'kubutz' ? '140px' : '100px') : '163px'"
+             [style.margin-bottom]="isNekodos && (letter.id === 'cholam' || letter.id === 'kubutz') ? '50px' : '0px'">
       </div>
     </div>
   </div>

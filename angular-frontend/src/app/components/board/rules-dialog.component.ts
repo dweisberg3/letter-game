@@ -14,16 +14,16 @@ import { MatButtonModule } from '@angular/material/button';
 
         <h3>🎮 Getting Started</h3>
         <ol>
-          <li>Pick a colored section (Yellow, Orange, Red, Blue, or Purple)</li>
-          <li>Choose how many letters to play with: 1, 2, or 3</li>
+          <li>Pick a colored set (Yellow, Orange, Red, Blue, or Purple)</li>
+          <li>Choose your Level: 1, 2, or 3</li>
           <li>Click "Start" to begin!</li>
         </ol>
 
         <h3>⏱️ Time Limits</h3>
         <ul>
-          <li><strong>1 Letter:</strong> 45 seconds</li>
-          <li><strong>2 Letters:</strong> 60 seconds</li>
-          <li><strong>3 Letters:</strong> 75 seconds</li>
+          <li><strong>Level 1:</strong> 45 seconds</li>
+          <li><strong>Level 2:</strong> 60 seconds</li>
+          <li><strong>Level 3:</strong> 75 seconds</li>
         </ul>
 
         <h3>🎯 How to Play</h3>
@@ -34,26 +34,26 @@ import { MatButtonModule } from '@angular/material/button';
         </ol>
 
         <h3>⚠️ Important Rule</h3>
-        <p class="warning">If you choose 1 letter and click the wrong one, the game is over!</p>
+        <p class="warning">If you choose Level 1 and click the wrong letter, the game is over!</p>
 
         <h3>🏆 Scoring</h3>
 
-        <h4>Regular Mode (One Section)</h4>
-        <p>When you play with just one colored section, the points are always:</p>
+        <h4>Regular Mode (One Set)</h4>
+        <p>When you play with just one colored set, the points are always:</p>
         <ul>
-          <li>1 Letter = 5 points</li>
-          <li>2 Letters = 10 points</li>
-          <li>3 Letters = 15 points</li>
+          <li>Level 1 = 5 points</li>
+          <li>Level 2 = 10 points</li>
+          <li>Level 3 = 15 points</li>
         </ul>
 
-        <h4>Cumulative Mode (Adding Sections)</h4>
-        <p>When you turn on "Cumulative," you play with more sections and earn more points!</p>
+        <h4>Cumulative Mode (Adding Sets)</h4>
+        <p>When you turn on "Cumulative," you play with more sets and earn more points!</p>
         <table>
           <tr>
             <th></th>
-            <th>1 Letter</th>
-            <th>2 Letters</th>
-            <th>3 Letters</th>
+            <th>Level 1</th>
+            <th>Level 2</th>
+            <th>Level 3</th>
           </tr>
           <tr>
             <td>Yellow</td>
@@ -88,11 +88,11 @@ import { MatButtonModule } from '@angular/material/button';
         </table>
 
         <h4>Nekodos Mode</h4>
-        <p>Nekodos has its own special section</p>
+        <p>Nekodos has its own special set</p>
         <ul>
-          <li>1 Letter = 5 points</li>
-          <li>2 Letters = 10 points</li>
-          <li>3 Letters = 15 points</li>
+          <li>Level 1 = 5 points</li>
+          <li>Level 2 = 10 points</li>
+          <li>Level 3 = 15 points</li>
           <li>No cumulative mode for Nekodos</li>
         </ul>
 

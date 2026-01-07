@@ -49,6 +49,7 @@ export class GameComponent implements OnInit, OnDestroy {
   currentAudio: HTMLAudioElement | null = null;
   pointMessages: Array<{text: string, isPositive: boolean}> = [];
   isFullscreen = false;
+  isAfterFirstAnnouncedSet = false;
 
   constructor(
     private apiService: ApiService,
@@ -150,10 +151,9 @@ export class GameComponent implements OnInit, OnDestroy {
       disableClose: true
     });
 
+    
+    this.sendData(endedEarly);
     this.points = 0;
-    if (!endedEarly) {
-      this.sendData(false);
-    }
   }
 
   handleChange(value: number): void {
@@ -177,8 +177,11 @@ export class GameComponent implements OnInit, OnDestroy {
     this.userCanClickLetters = false;
     const audioArray = this.buildAudioArr()
 
-    // Small delay to let audio files load
-    await this.delay(500);
+    if(!this.isAfterFirstAnnouncedSet){
+       await this.delay(500);  // Small delay to let audio files load for first play
+
+    }
+   
 
     await this.playAllAudio(audioArray)
     this.userCanClickLetters = true;
@@ -200,12 +203,13 @@ export class GameComponent implements OnInit, OnDestroy {
     this.points = 0;
     this.isActive = true;
     this.anounceSetofLetters() 
+    this.isAfterFirstAnnouncedSet = true;
   }
 
   async playAllAudio(audioArr: HTMLAudioElement[]): Promise<void> {
     for (const audio of audioArr) {
       await this.playAudio(audio);
-      await this.delay(100);
+      await this.delay(50);
     }
     // this.userCanClickLetters = true;
   }
@@ -353,6 +357,11 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   getSectionCssClass(section: any): string {
+    // Check if this is the nekodos section
+    if (this.isNekodos && section.css_id === 'middle-right container') {
+      return 'nekodos-container';
+    }
+
     if (section.css_id.startsWith('middle-')) {
       return section.css_id === 'middle-left container'
         ? 'middle-left-game container'

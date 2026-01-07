@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [CommonModule, MatDialogModule, MatButtonModule],
   template: `
     <div class="game-over-dialog">
+      <img src="/letter_image_files/celebration.gif" class="celebration-gif" alt="Celebration">
       <h1 mat-dialog-title>Game Over</h1>
       <div mat-dialog-content>
         <p class="score-text">You scored</p>
@@ -24,6 +25,13 @@ import { MatButtonModule } from '@angular/material/button';
     .game-over-dialog {
       text-align: center;
       padding: 20px;
+    }
+
+    .celebration-gif {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 10px;
     }
 
     h1 {

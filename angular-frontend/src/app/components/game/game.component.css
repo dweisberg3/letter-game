@@ -65,14 +65,14 @@
 
 .middle-right-game {
   position: fixed;
-  top: 65%;
+  top: 40%;
   right: 10px;
   transform: translateY(-50%);
 }
 
 .middle-left-game {
   position: fixed;
-  top: 35%;
+  top: 60%;
   margin-top: 35px;
   left: 10px;
   transform: translateY(-50%);

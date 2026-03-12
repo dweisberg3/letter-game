@@ -339,12 +339,8 @@ export class GameComponent implements OnInit, OnDestroy {
           });
         }, 800);
       } else {
-        if (this.currIndex === this.soundClipIndexArr.length - 1) {
-          this.anounceSetofLetters();
-          this.currIndex = 0;
-        } else {
-          this.currIndex++;
-        }
+        this.anounceSetofLetters();
+        this.currIndex = 0; 
       }
     }
   }

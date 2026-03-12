@@ -18,8 +18,10 @@
     </div>
 
     <div *ngIf="!isActive" style="display: flex; flex-direction: column; align-items: center; background-color: #d0d0d0; padding: 20px; border-radius: 8px;">
+      <span style="font-size: 16px; padding-bottom: 8px;">Select a Level:</span>
       <mat-form-field appearance="outline" style="width: 100px; margin-bottom: 8px;">
         <!-- <mat-label>Choose a Level</mat-label> -->
+         
         <mat-select [(ngModel)]="numOfLetters" (selectionChange)="handleChange($event.value)">
           <!-- <mat-option [value]="0">Select Level</mat-option> -->
           <mat-option [value]="1">Level 1</mat-option>
@@ -27,7 +29,7 @@
           <mat-option [value]="3">Level 3</mat-option>
         </mat-select>
       </mat-form-field>
-
+      
       <button mat-raised-button
               color="primary"
               (click)="startGame()"
